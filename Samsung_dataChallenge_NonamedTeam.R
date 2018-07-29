@@ -1,16 +1,12 @@
 #install.packages("readxl")
 library(readxl)
 accident <- read.csv("dataset_kor/교통사망사고정보/Train_교통사망사고정보(12.1~17.6).csv")
-#당사자종별_1당과 _2당의 경우 2017년 데이터부터는 
-#대분류와 소분류가 같게 적혀있어 모든 데이터를 그꼴로 바꾸었음
-dang1_so <- accident$당사자종별_1당_대분류
-dang2_so <- accident$당사자종별_2당_대분류
-accident$당사자종별_1당 <- dang1_so
-accident$당사자종별_2당 <- dang2_so
+#1당 2당 소분류 필요없어서 제외
+accident <- accident[,-21]
+accident <- accident[,-22]
 #""와 "0"을 모두 "없음"으로 치환
 temp <- gsub("0", "없음", accident$당사자종별_2당_대분류)
 temp[!nzchar(temp)] <- "없음"
-accident$당사자종별_2당 <- temp
 accident$당사자종별_2당_대분류 <- temp
 
 # 발생지시도와 시군구는 인구수도 같이 봐야할 것 같다.
@@ -57,4 +53,6 @@ ggplot(accident, aes(accident$사고유형, accident$사상자수)) + geom_boxpl
 # 사고유형대분류 대비 사망자수 비율과 나머지 비
 View(accident %>% group_by(사고유형_대분류) %>% summarise(samang_mean = sum(사망자수) / sum(사상자수) * 100, other_mean = sum(중상자수 + 경상자수) / sum(사상자수) * 100))
 # 사고유형중분류 대비 사망자수 비율과 나머지비, 그리고 각각의 발생횟수
-View(accident %>% group_by(사고유형_중분류) %>% summarise(samang_mean = sum(사망자수) / sum(사상자수) * 100, other_mean = sum(중상자수 + 경상자수) / sum(사상자수) * 100, count = n())
+View(accident %>% group_by(사고유형_중분류) %>% summarise(samang_mean = sum(사망자수) / sum(사상자수) * 100, other_mean = sum(중상자수 + 경상자수) / sum(사상자수) * 100, count = n()))
+# 사고유형중분류 대비 사상자수 각각의 비율과 발생횟수
+View(accident %>% group_by(사고유형_중분류) %>% summarise(samang_mean = sum(사망자수) / sum(사상자수) * 100, joong_mean = sum(중상자수) / sum(사상자수) * 100, kyoung_mean = sum(경상자수) / sum(사상자수) * 100, busangsin_mean = sum(부상신고자수) / sum(사상자수) * 100, count = n()))
