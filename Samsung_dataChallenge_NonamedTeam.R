@@ -56,3 +56,5 @@ View(accident %>% group_by(사고유형) %>% summarise(sum = sum(사망자수), 
 ggplot(accident, aes(accident$사고유형, accident$사상자수)) + geom_boxplot() + ylim(0, 6)
 # 사고유형대분류 대비 사망자수 비율과 나머지 비
 View(accident %>% group_by(사고유형_대분류) %>% summarise(samang_mean = sum(사망자수) / sum(사상자수) * 100, other_mean = sum(중상자수 + 경상자수) / sum(사상자수) * 100))
+# 사고유형중분류 대비 사망자수 비율과 나머지비, 그리고 각각의 발생횟수
+View(accident %>% group_by(사고유형_중분류) %>% summarise(samang_mean = sum(사망자수) / sum(사상자수) * 100, other_mean = sum(중상자수 + 경상자수) / sum(사상자수) * 100, count = n())
