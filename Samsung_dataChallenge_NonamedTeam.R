@@ -1,4 +1,4 @@
-install.packages("readxl")
+#install.packages("readxl")
 library(readxl)
 accident <- read.csv("dataset_kor/교통사망사고정보/Train_교통사망사고정보(12.1~17.6).csv")
 #당사자종별_1당과 _2당의 경우 2017년 데이터부터는 
@@ -30,9 +30,15 @@ show_chisq_graph <- function(df, pvalue){
 
 # 시간별 평균 사상자 수 그래프
 hour <- as.numeric(substr(accident$발생년월일시, 9, 10))
+#install.library("ggplot2")
+library(ggplot2)
+#install.library("dplyr")
+library(dplyr)
+
 accident_people <- accident$사상자수
 test_ha <- as.data.frame(cbind(hour, accident_people))
 test_ha_mean <- test_ha %>% group_by(hour) %>% summarise(mean=mean(accident_people))
+plot(test_ha_mean)
 lines(test_ha_mean$hour, test_ha_mean$mean)
 
 
