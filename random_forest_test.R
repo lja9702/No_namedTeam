@@ -21,17 +21,37 @@ setwd('C:/Users/Administrator/Downloads/dataset_kor/교통사망사고정보')
 accident <- read.csv('Train_교통사망사고정보(12.1~17.6).csv')
                      #, fileEncoding = 'CP949', encoding = 'UTF-8')
 
-dim(accident)
+setwd('C:/Users/Administrator/Downloads/dataset_kor/보조데이터/02.서울시 교통량/')
+traffic <- read.csv('서울시_교통량(15.1~17.6).csv')
+
+setwd('C:/Users/Administrator/Downloads/dataset_kor/보조데이터/03.서울시 도로 링크별 교통 사고발생 수/')
+road <- read.xlsx('서울시 도로링크별 교통사고(2015~2017).xlsx')
+
+setwd('C:/Users/Administrator/Downloads/dataset_kor/보조데이터/04.무단횡단사고다발지/')
+across <- read.csv('무단횡단사고다발지(2012~2016).csv')
+
+setwd('C:/Users/Administrator/Downloads/dataset_kor/보조데이터/05.보행노인사고다발지/')
+old <- read.csv('보행노인사고다발지(2012~2016).csv')
+
+setwd('C:/Users/Administrator/Downloads/dataset_kor/보조데이터/06.보행어린이사고다발지/')
+child <- read.csv('보행어린이사고다발지(2012~2016).csv')
+
+setwd('C:/Users/Administrator/Downloads/dataset_kor/보조데이터/07.스쿨존내사고다발지/')
+school <- read.csv('스쿨존내어린이사고다발지(2012~2016).csv')
+
+setwd('C:/Users/Administrator/Downloads/dataset_kor/보조데이터/08.자전거사고다발지/')
+bicycle <- read.csv('자전거사고다발지(2012~2016).csv')
 
 
 # DNN with mxnet
 # ref: https://mxnet.incubator.apache.org/tutorials/r/fiveMinutesNeuralNetwork.html
-train.x <- data.matrix(accident %>% dplyr::select(c(6,8,9,10,12,15,24,25,26,27))) # 25037 * 4
+train.x <- data.matrix(accident %>% dplyr::select(c(6,8,9,10)))#,12,15,24,25,26,27))) # 25037 * 4
+#train.x <- scale(train.x)
 train.y <- as.numeric(accident$도로형태) # 25037 * 1
 
 mx.set.seed(4444)
-model <- mx.mlp(train.x, train.y, hidden_node=15, out_node=16, out_activation="softmax",
-                num.round=20, array.batch.size=15, learning.rate=0.0001, momentum=0.9,
+model <- mx.mlp(train.x, train.y, hidden_node=30, out_node=16, activation="sigmoid", out_activation="softmax",
+                num.round=100, array.batch.size=500, learning.rate=0.01, momentum=0.9,
                 eval.metric=mx.metric.accuracy)
 
 preds = predict(model, train.x)
