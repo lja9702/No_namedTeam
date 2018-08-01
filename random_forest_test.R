@@ -1,3 +1,8 @@
+cran <- getOption("repos")
+cran["dmlc"] <- "https://apache-mxnet.s3-accelerate.dualstack.amazonaws.com/R/CRAN/"
+options(repos = cran)
+install.packages('mlbench')
+install.packages("mxnet")
 install.packages('readxl')
 install.packages('randomForest')
 install.packages('MASS')
@@ -6,23 +11,43 @@ require(readxl)
 require(randomForest)
 require(MASS)
 require(dplyr)
+require(mlbench)
+require(mxnet)
+rm(cran)
 
 set.seed(4444)
 
-setwd('~/Downloads/dataset_kor/êµí†µ?‚¬×ºì‚¬ê³ ì •ë³?/')
-accident <- read.csv('Train_êµí†µ?‚¬ë§ì‚¬ê³ ì •ë³?(12.1~17.6).csv',
-                     fileEncoding = 'CP949', encoding = 'UTF-8')
+setwd('C:/Users/Administrator/Downloads/dataset_kor/êµí†µì‚¬ë§ì‚¬ê³ ì •ë³´')
+accident <- read.csv('Train_êµí†µì‚¬ë§ì‚¬ê³ ì •ë³´(12.1~17.6).csv')
+                     #, fileEncoding = 'CP949', encoding = 'UTF-8')
 
 dim(accident)
 
-# except ë°œìƒì§€?‹œêµ°êµ¬ (too many levels...[209])
-cp_accident <- accident %>% dplyr::select(-¹ß»ıÁö½Ã±º±¸)
+
+# DNN with mxnet
+# ref: https://mxnet.incubator.apache.org/tutorials/r/fiveMinutesNeuralNetwork.html
+train.x <- data.matrix(accident %>% dplyr::select(c(6,8,9,10,12,15,24,25,26,27))) # 25037 * 4
+train.y <- as.numeric(accident$ë„ë¡œí˜•íƒœ) # 25037 * 1
+
+mx.set.seed(4444)
+model <- mx.mlp(train.x, train.y, hidden_node=15, out_node=16, out_activation="softmax",
+                num.round=20, array.batch.size=15, learning.rate=0.0001, momentum=0.9,
+                eval.metric=mx.metric.accuracy)
+
+preds = predict(model, train.x)
+pred.label = max.col(t(preds))-1
+table(pred.label, train.y)
+
+
+# ì—¬ê¸°ë¶€í„´ random forest ì½”ë“œ
+# except ë°œìƒì§€ì‹œêµ°êµ¬ (too many levels...[209])
+cp_accident <- accident %>% dplyr::select(-ë°œìƒì§€ì‹œêµ°êµ¬)
 
 # train with 300 rows
 train <- sample(1:nrow(cp_accident), 300)
 
-# result(?‚¬?ƒ??ˆ˜)
-accident.rf <- randomForest(¹ß»ıÁö½Ã±º±¸ ~ . ,data=cp_accident, subset=train)
+# result(ë°œìƒì§€ì‹œêµ°êµ¬)
+accident.rf <- randomForest(ë°œìƒì§€ì‹œêµ°êµ¬ ~ . ,data=cp_accident, subset=train)
 accident.rf
 
 # see graph
@@ -35,11 +60,11 @@ test.err=double(13)
 #mtry is no of Variables randomly chosen at each split
 for(mtry in 1:13) 
 {
-  rf=randomForest(¹ß»ıÁö½Ã±º±¸ ~ . , data = cp_accident , subset = train,mtry=mtry,ntree=400) 
+  rf=randomForest(ë°œìƒì§€ì‹œêµ°êµ¬ ~ . , data = cp_accident , subset = train,mtry=mtry,ntree=400) 
   oob.err[mtry] = rf$mse[400] #Error of all Trees fitted
   
   pred<-predict(rf,cp_accident[-train,]) #Predictions on Test Set for each Tree
-  test.err[mtry]= with(cp_accident[-train,], mean( (¹ß»ıÁö½Ã±º±¸ - pred)^2)) #Mean Squared Test Error
+  test.err[mtry]= with(cp_accident[-train,], mean( (ë°œìƒì§€ì‹œêµ°êµ¬ - pred)^2)) #Mean Squared Test Error
   
   cat(mtry," ") #printing the output to the console
   
