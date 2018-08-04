@@ -25,7 +25,7 @@ setwd('C:/Users/Administrator/Downloads/dataset_kor/보조데이터/02.서울시
 traffic <- read.csv('서울시_교통량(15.1~17.6).csv')
 
 setwd('C:/Users/Administrator/Downloads/dataset_kor/보조데이터/03.서울시 도로 링크별 교통 사고발생 수/')
-road <- read.xlsx('서울시 도로링크별 교통사고(2015~2017).xlsx')
+road <- readxl::read_xlsx('서울시 도로링크별 교통사고(2015~2017).xlsx')
 
 setwd('C:/Users/Administrator/Downloads/dataset_kor/보조데이터/04.무단횡단사고다발지/')
 across <- read.csv('무단횡단사고다발지(2012~2016).csv')
@@ -45,18 +45,39 @@ bicycle <- read.csv('자전거사고다발지(2012~2016).csv')
 
 # DNN with mxnet
 # ref: https://mxnet.incubator.apache.org/tutorials/r/fiveMinutesNeuralNetwork.html
-train.x <- data.matrix(accident %>% dplyr::select(c(6,8,9,10)))#,12,15,24,25,26,27))) # 25037 * 4
-#train.x <- scale(train.x)
-train.y <- as.numeric(accident$도로형태) # 25037 * 1
+# 도로형태가 기타 단일로로 너무 편향되어있기에 기타 단일로의 데이터는 4500개 정도만 추출하여 학습시켜본다
+sample <- accident %>% filter(도로형태 != "기타단일로") # 기타 단일로를 제외한 데이터
+sample_road <- accident %>% filter(도로형태 == "기타단일로")
+sample_road <- sample_road[sample(1:nrow(sample_road),4500),]
+sample <- rbind(sample, sample_road)
+train.x <- data.matrix(
+  sample %>% dplyr::select(
+    -도로형태, -도로형태_대분류,
+    -1,-2,-3,-4,-5))
+#train.x <- data.matrix(sample %>% dplyr::select(경도, 위도))
+#train.x <- data.matrix(sample %>% dplyr::select(c(6,8,9,10,12,15,24,25,26,27)))
+train.x <- scale(train.x)
+train.y <- as.numeric(sample$도로형태)
 
 mx.set.seed(4444)
-model <- mx.mlp(train.x, train.y, hidden_node=30, out_node=16, activation="sigmoid", out_activation="softmax",
-                num.round=100, array.batch.size=500, learning.rate=0.01, momentum=0.9,
-                eval.metric=mx.metric.accuracy)
+model <- mx.mlp(train.x, train.y, hidden_node=20, out_node=16, activation="relu", out_activation="softmax",
+                num.round=25, array.batch.size=50, learning.rate=0.01, momentum=0.6,
+                eval.metric=mx.metric.accuracy, dropout=0.01)
 
-preds = predict(model, train.x)
+input <- scale(data.matrix(
+  accident %>% dplyr::select(
+    -도로형태, -도로형태_대분류,
+    -1,-2,-3,-4,-5)))
+output <- as.numeric(accident$도로형태)
+
+preds = predict(model, input)
 pred.label = max.col(t(preds))-1
-table(pred.label, train.y)
+table(pred.label, output)
+
+result <- cbind(as.data.frame(pred.label), as.data.frame(output))
+result_len <- nrow(result)
+result_correct <- nrow(result %>% filter(pred.label == output))
+result_correct/result_len # Accuracy
 
 
 # 여기부턴 random forest 코드
