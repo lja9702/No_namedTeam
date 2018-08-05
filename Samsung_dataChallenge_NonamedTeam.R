@@ -65,15 +65,21 @@ View(accident %>% group_by(사고유형_대분류) %>% summarise(samang_mean = s
 View(accident %>% group_by(사고유형_중분류) %>% summarise(samang_mean = sum(사망자수) / sum(사상자수) * 100, other_mean = sum(중상자수 + 경상자수) / sum(사상자수) * 100, count = n()))
 # 사고유형중분류 대비 사상자수 각각의 비율과 발생횟수
 View(accident %>% group_by(사고유형_중분류) %>% summarise(samang_mean = sum(사망자수) / sum(사상자수) * 100, joong_mean = sum(중상자수) / sum(사상자수) * 100, kyoung_mean = sum(경상자수) / sum(사상자수) * 100, busangsin_mean = sum(부상신고자수) / sum(사상자수) * 100, count = n()))
+ttt <- accident %>% group_by(사고유형_중분류) %>% summarise(samang_mean = sum(사망자수) / sum(사상자수) * 100, joong_mean = sum(중상자수) / sum(사상자수) * 100, kyoung_mean = sum(경상자수) / sum(사상자수) * 100, busangsin_mean = sum(부상신고자수) / sum(사상자수) * 100, count = n())
 
 #진아_ 사고유형별 사망, 사상, 중상, 경상, 부상신고자 수 딥러닝
-accident.temp <- cbind(accident$사망자수, accident$사상자수, accident$중상자수, accident$경상자수, accident$부상신고자수, accident$법규위반, accident$도로형태)
-colnames(accident.temp) <- c("사망자수", "사상자수", "중상자수", "경상자수", "부상신고자수", "법규위반", "도로형태", "")
+accident.temp <- cbind(accident$사망자수, accident$중상자수, accident$경상자수, accident$부상신고자수, accident$당사자종별_1당, accident$당사자종별_2당, accident$법규위반)
+colnames(accident.temp) <- c("사망자수", "중상자수", "경상자수", "부상신고자수", "당사자종별_1당", "당사자종별_2당", "법규위반")
 accident.temp <- as.data.frame(accident.temp)
+
+accident.temp$사망자수 <- as.numeric(accident.temp$사망자수)
+accident.temp$중상자수 <- as.numeric(accident.temp$중상자수)
+accident.temp$경상자수 <- as.numeric(accident.temp$경상자수)
+accident.temp$부상신고자수 <- as.numeric(accident.temp$부상신고자수)
 
 sagou.temp <- as.data.frame(accident$사고유형)
 colnames(sagou.temp) <- c("사고유형")
-accident.scale <- cbind(scale(accident.temp), sagou.temp)
+accident.scale <- cbind(accident.temp, sagou.temp)
 accident.scale[, 8] <- as.numeric(accident.scale[, 8])
 
 acsample <- sample(1:nrow(accident.scale), size = round(0.2 * nrow(accident.scale)))
@@ -81,7 +87,6 @@ test.x <- data.matrix(accident.scale[acsample, 1: 7])
 test.y <- accident.scale[acsample, 8]
 train.x <- data.matrix(accident.scale[-acsample, 1:7])
 train.y <- accident.scale[-acsample, 8]
-
+# 41%정확도
 mx.set.seed(0)
-model <- mx.mlp(train.x, train.y, hidden_node=10, out_node=2, out_activation="softmax", num.round=20, array.batch.size=15, learning.rate=0.07, momentum=0.9, eval.metric=mx.metric.accuracy)
-
+model <- mx.mlp(train.x, train.y, hidden_node=6, out_node=22, out_activation="softmax", num.round=130, array.batch.size=200, learning.rate=0.07, momentum=0.75, eval.metric=mx.metric.accuracy)
