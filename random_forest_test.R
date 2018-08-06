@@ -15,7 +15,7 @@ require(mlbench)
 require(mxnet)
 rm(cran)
 
-set.seed(4444)
+set.seed(22)
 
 setwd('C:/Users/Administrator/Downloads/dataset_kor/교통사망사고정보')
 accident <- read.csv('Train_교통사망사고정보(12.1~17.6).csv')
@@ -45,38 +45,66 @@ bicycle <- read.csv('자전거사고다발지(2012~2016).csv')
 
 # DNN with mxnet
 # ref: https://mxnet.incubator.apache.org/tutorials/r/fiveMinutesNeuralNetwork.html
-# 도로형태가 기타 단일로로 너무 편향되어있기에 기타 단일로의 데이터는 4500개 정도만 추출하여 학습시켜본다
-sample <- accident %>% filter(도로형태 != "기타단일로") # 기타 단일로를 제외한 데이터
-sample_road <- accident %>% filter(도로형태 == "기타단일로")
-sample_road <- sample_road[sample(1:nrow(sample_road),4500),]
+# 필요한 컬럼만 취한다.
+acc <- accident %>% dplyr::select(
+    -도로형태_대분류)
+#    -1,-2,-3,-4,-5,
+#    -발생지시도, -발생지시군구,-당사자종별_1당_대분류,-당사자종별_1당,
+#    -당사자종별_2당_대분류,-당사자종별_2당)
+
+# 비율로 랜덤하게 나눔
+n <- nrow(acc)
+data <- data.frame(x=runif(n), y=rnorm(n))
+ind <- sample(c(TRUE, FALSE), n, replace=TRUE, prob=c(0.70, 0.30))
+train <- acc[ind, ]
+test <- acc[!ind, ]
+#n <- nrow(test)
+#data <- data.frame(x=runif(n), y=rnorm(n))
+#ind <- sample(c(TRUE, FALSE), n, replace=TRUE, prob=c(0.50, 0.50))
+cross <- test
+#cross <- test[ind, ]
+#test <- test[!ind, ]
+# train, cross, test: 70:15:15
+# train은 학습용, cross는 비교용, test는 결과 채점용
+
+# 도로형태가 기타 단일로로 너무 편향되어있기에 기타 단일로의 데이터는 4000개 정도만 추출하여 학습시켜본다
+sample <- train %>% filter(도로형태 != "기타단일로") # 기타 단일로를 제외한 데이터
+sample_road <- train %>% filter(도로형태 == "기타단일로")
+sample_road <- sample_road[sample(1:nrow(sample_road),2000),]
 sample <- rbind(sample, sample_road)
-train.x <- data.matrix(
-  sample %>% dplyr::select(
-    -도로형태, -도로형태_대분류,
-    -1,-2,-3,-4,-5))
-#train.x <- data.matrix(sample %>% dplyr::select(경도, 위도))
-#train.x <- data.matrix(sample %>% dplyr::select(c(6,8,9,10,12,15,24,25,26,27)))
+
+# 도로형태만 빼고 scale
+train.x <- data.matrix(sample %>% dplyr::select(-도로형태))
 train.x <- scale(train.x)
 train.y <- as.numeric(sample$도로형태)
+cross.x <- data.matrix(cross %>% dplyr::select(-도로형태))
+cross.x <- scale(cross.x)
+cross.y <- as.numeric(cross$도로형태)
+test.x <- data.matrix(test %>% dplyr::select(-도로형태))
+test.x <- scale(test.x)
+test.y <- as.numeric(test$도로형태)
 
-mx.set.seed(4444)
-model <- mx.mlp(train.x, train.y, hidden_node=20, out_node=16, activation="relu", out_activation="softmax",
-                num.round=25, array.batch.size=50, learning.rate=0.01, momentum=0.6,
-                eval.metric=mx.metric.accuracy, dropout=0.01)
+# 학습 model
+mx.set.seed(22)
+model_road <- mx.mlp(train.x, train.y, hidden_node=15, out_node=16, activation="relu", out_activation="softmax",
+                num.round=300, array.batch.size=20, learning.rate=0.001, momentum=0.9, ctx=mx.cpu(),
+                eval.metric=mx.metric.accuracy, dropout=0.01, eval.data=list(data=cross.x, label=cross.y))
+                #epoch.end.callback=mx.callback.save.checkpoint("model_road")) 회차저장
 
-input <- scale(data.matrix(
-  accident %>% dplyr::select(
-    -도로형태, -도로형태_대분류,
-    -1,-2,-3,-4,-5)))
-output <- as.numeric(accident$도로형태)
+# 저장
+saveRDS(model_road, "model_road.rds")
+# 불러오기
+model_road <- readRDS("model_road.rds")
 
-preds = predict(model, input)
+# 결과 테이블
+preds = predict(model_road, test.x)
 pred.label = max.col(t(preds))-1
-table(pred.label, output)
+table(pred.label, test.y)
 
-result <- cbind(as.data.frame(pred.label), as.data.frame(output))
+# 결과 퍼센트
+result <- cbind(as.data.frame(pred.label), as.data.frame(test.y))
 result_len <- nrow(result)
-result_correct <- nrow(result %>% filter(pred.label == output))
+result_correct <- nrow(result %>% filter(pred.label == test.y))
 result_correct/result_len # Accuracy
 
 
