@@ -1,6 +1,6 @@
 install.packages("readxl")
-install.library("ggplot2")
-install.library("dplyr")
+install.packages("ggplot2")
+install.packages("dplyr")
 
 cran <- getOption("repos")
 cran["dmlc"] <- "https://apache-mxnet.s3-accelerate.dualstack.amazonaws.com/R/CRAN/"
@@ -12,7 +12,6 @@ library(readxl)
 library(ggplot2)
 library(dplyr)
 library(mxnet)
-set.seed(4444)
 
 accident <- read.csv('Kor_Train_교통사망사고정보(12.1~17.6).csv')
 
@@ -30,8 +29,10 @@ train.y <- sample$사상자수
 test.x <- data.matrix(test %>% dplyr::select(c(4,13,14,16,17,18,19,20,22)))
 test.y <- test$사상자수
 
+set.seed(4444)
+mx.set.seed(4444)
 model <- mx.mlp(train.x, train.y, hidden_node=15, out_node=20, activation="relu", out_activation="softmax",
-                num.round=1500, array.batch.size=50, learning.rate=0.01, momentum=0.9,
+                num.round=300, array.batch.size=50, learning.rate=0.01, momentum=0.9,
                 eval.metric=mx.metric.accuracy, eval.data = list(data = test.x, label = test.y))
 #결과 :
 #Train-accuacy = 0.61797980146376
@@ -40,3 +41,9 @@ model <- mx.mlp(train.x, train.y, hidden_node=15, out_node=20, activation="relu"
 preds = predict(model, test.x)
 pred.label = max.col(t(preds))-1
 table(pred.label, test.y)
+
+result <- cbind(as.data.frame(pred.label), as.data.frame(test.y))
+result_len <- nrow(result)
+result_correct <- nrow(result %>% filter(pred.label == test.y))
+result_correct/result_len # Accuracy
+
