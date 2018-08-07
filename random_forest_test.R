@@ -46,33 +46,37 @@ bicycle <- read.csv('자전거사고다발지(2012~2016).csv')
 # DNN with mxnet
 # ref: https://mxnet.incubator.apache.org/tutorials/r/fiveMinutesNeuralNetwork.html
 # 도로형태가 기타 단일로로 너무 편향되어있기에 기타 단일로의 데이터는 4500개 정도만 추출하여 학습시켜본다
-sample <- accident %>% filter(도로형태 != "기타단일로") # 기타 단일로를 제외한 데이터
-sample_road <- accident %>% filter(도로형태 == "기타단일로")
+test <- accident[1:5000, ]
+train <- accident[5001:nrow(accident),]
+
+sample <- train %>% filter(도로형태 != "기타단일로") # 기타 단일로를 제외한 데이터
+sample_road <- train %>% filter(도로형태 == "기타단일로")
 sample_road <- sample_road[sample(1:nrow(sample_road),4500),]
 sample <- rbind(sample, sample_road)
+
 train.x <- data.matrix(
   sample %>% dplyr::select(
     -도로형태, -도로형태_대분류,
     -1,-2,-3,-4,-5))
 #train.x <- data.matrix(sample %>% dplyr::select(경도, 위도))
 #train.x <- data.matrix(sample %>% dplyr::select(c(6,8,9,10,12,15,24,25,26,27)))
-train.x <- scale(train.x)
+#train.x <- scale(train.x)
 train.y <- as.numeric(sample$도로형태)
+test.x <- data.matrix(
+  test %>% dplyr::select(
+    -도로형태, -도로형태_대분류,
+    -1,-2,-3,-4,-5))
+#text.x <- scale(test.x)
+test.y <- as.numeric(test$도로형태)
 
 mx.set.seed(4444)
-model <- mx.mlp(train.x, train.y, hidden_node=20, out_node=16, activation="relu", out_activation="softmax",
-                num.round=25, array.batch.size=50, learning.rate=0.01, momentum=0.6,
-                eval.metric=mx.metric.accuracy, dropout=0.01)
+model_road <- mx.mlp(train.x, train.y, hidden_node=15, out_node=16, out_activation="softmax",
+                num.round=500, array.batch.size=50, learning.rate=0.001, momentum=0.9,
+                eval.metric=mx.metric.accuracy, eval.data=list(data = test.x, label = test.y))
 
-input <- scale(data.matrix(
-  accident %>% dplyr::select(
-    -도로형태, -도로형태_대분류,
-    -1,-2,-3,-4,-5)))
-output <- as.numeric(accident$도로형태)
-
-preds = predict(model, input)
+preds = predict(model_road, test.x)
 pred.label = max.col(t(preds))-1
-table(pred.label, output)
+table(pred.label, test.y)
 
 result <- cbind(as.data.frame(pred.label), as.data.frame(output))
 result_len <- nrow(result)
