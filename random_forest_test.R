@@ -50,10 +50,8 @@ sample <- accident %>% filter(도로형태 != "기타단일로") # 기타 단일
 sample_road <- accident %>% filter(도로형태 == "기타단일로")
 sample_road <- sample_road[sample(1:nrow(sample_road),4500),]
 sample <- rbind(sample, sample_road)
-train.x <- data.matrix(
-  sample %>% dplyr::select(
-    -도로형태, -도로형태_대분류,
-    -1,-2,-3,-4,-5))
+
+train.x <- data.matrix(sample %>% dplyr::select(-도로형태,c(-1:-5)))
 #train.x <- data.matrix(sample %>% dplyr::select(경도, 위도))
 #train.x <- data.matrix(sample %>% dplyr::select(c(6,8,9,10,12,15,24,25,26,27)))
 train.x <- scale(train.x)
@@ -66,7 +64,7 @@ model <- mx.mlp(train.x, train.y, hidden_node=20, out_node=16, activation="relu"
 
 input <- scale(data.matrix(
   accident %>% dplyr::select(
-    -도로형태, -도로형태_대분류,
+    -도로형태,
     -1,-2,-3,-4,-5)))
 output <- as.numeric(accident$도로형태)
 
@@ -106,7 +104,7 @@ for(mtry in 1:13)
   
   pred<-predict(rf,cp_accident[-train,]) #Predictions on Test Set for each Tree
   test.err[mtry]= with(cp_accident[-train,], mean( (발생지시군구 - pred)^2)) #Mean Squared Test Error
-  
+  .
   cat(mtry," ") #printing the output to the console
   
 }

@@ -13,7 +13,7 @@ library(ggplot2)
 library(dplyr)
 library(mxnet)
 
-accident <- read.csv("dataset_kor/교통사망사고정보/Train_교통사망사고정보(12.1~17.6).csv")
+accident <- read.csv("dataset_kor/교통사망사고정보/Kor_Train_교통사망사고정보(12.1~17.6).csv")
 #1당 2당 소분류 필요없어서 제외
 accident <- accident[,-21]
 accident <- accident[,-22]
@@ -90,3 +90,13 @@ train.y <- accident.scale[-acsample, 8]
 # 41%정확도
 mx.set.seed(0)
 model <- mx.mlp(train.x, train.y, hidden_node=6, out_node=22, out_activation="softmax", num.round=130, array.batch.size=200, learning.rate=0.07, momentum=0.75, eval.metric=mx.metric.accuracy)
+model <- mx.mlp(train.x, train.y, hidden_node=10, out_node=22, out_activation="softmax", num.round=130, array.batch.size=200, learning.rate=0.07, momentum=0.75, eval.metric=mx.metric.accuracy)
+
+preds = predict(model, test.x)
+pred.label = max.col(t(preds))-1
+table(pred.label, test.y)
+
+result <- cbind(as.data.frame(pred.label), as.data.frame(test.y))
+result_len <- nrow(result)
+result_correct <- nrow(result %>% filter(pred.label == test.y))
+result_correct/result_len # Accuracy
