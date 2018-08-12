@@ -21,21 +21,21 @@ setwd('C:/Users/Administrator/Downloads/dataset_kor/교통사망사고정보')
 accident <- read.csv('Train_교통사망사고정보(12.1~17.6).csv')
 #, fileEncoding = 'CP949', encoding = 'UTF-8')
 
-setwd('C:/Users/Administrator/Downloads/dataset_kor/보조데이터')
+setwd('C:/Users/Administrator/Downloads/dataset_kor/보조데이터/01.서울시 차량 통행 속도/')
 # 진기 코드/
-file_csv_01 <- list.files("./01.서울시 차량 통행 속도/",pattern="*.csv")
-file_CSV_01 <- list.files("./01.서울시 차량 통행 속도/",pattern="*.CSV")
+file_csv_01 <- list.files(".",pattern="*.csv")
+file_CSV_01 <- list.files(".",pattern="*.CSV")
 file_csv_cnt_01 <- length(file_csv_01)
 file_CSV_cnt_01 <- length(file_CSV_01)
 i=1
 for(j in 1:file_csv_cnt_01){
   tmp = paste("tmp",i,sep="")
-  assign(tmp, read.csv(paste("./01.서울시 차량 통행 속도/","/",file_csv_01[j],sep="")))
+  assign(tmp, read.csv(paste(".","/",file_csv_01[j],sep="")))
   i=i+1
 }
 for(j in 1:file_CSV_cnt_01){
   tmp = paste("tmp",i,sep="")
-  assign(tmp, read.csv(paste("./01.서울시 차량 통행 속도/","/",file_CSV_01[j],sep="")))
+  assign(tmp, read.csv(paste(".","/",file_CSV_01[j],sep="")))
   i=i+1
 }
 
@@ -111,7 +111,6 @@ ss<-speed %>% group_by(연도, 도로명, 시점명, 종점명, 링크ID, 거리
 View(ss)
 
 ss_j <- left_join(ss, road, by=c("링크ID"))
-ss_j <- ss_j %>% filter(!is.na(시군구))
 View(ss_j)
 
 View(head(traffic, 20))

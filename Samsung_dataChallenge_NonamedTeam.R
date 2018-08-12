@@ -13,7 +13,7 @@ library(ggplot2)
 library(dplyr)
 library(mxnet)
 
-accident <- read.csv("C:/Users/user/Documents/GitHub/No_namedTeam/Kor_Train_교통사망사고정보(12.1~17.6).csv")
+accident <- read.csv("dataset_kor/교통사망사고정보/Kor_Train_교통사망사고정보(12.1~17.6).csv")
 #1당 2당 소분류 필요없어서 제외
 accident <- accident[,-21]
 accident <- accident[,-22]
