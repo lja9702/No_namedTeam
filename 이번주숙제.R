@@ -17,7 +17,7 @@ for(j in 1:file_CSV_cnt_01){
   assign(tmp, read.csv(paste(dir_01,"/",file_CSV_01[j],sep="")))
   i=i+1
 }
-
+tmp42=read_xlsx("../보조데이터/01.서울시 차량 통행 속도/2016년 1월 통행속도.xlsx")
 tmp25 <- tmp25[,-33]
 tmp26 <- tmp26[,-33]
 tmp27 <- tmp27[,-33]
