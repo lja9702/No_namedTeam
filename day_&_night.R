@@ -33,15 +33,15 @@ rm(file)
 test <- accident[1:5000, ]
 train <- accident[5001:nrow(accident), ]
 
-train.x <- data.matrix(train %>% select(c(요일, 발생지시도, 사고유형_대분류, 사고유형_중분류, 도로형태_대분류, 도로형태)))
+train.x <- data.matrix(train %>% select(c(요일, 발생지시도, 사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태_대분류, 도로형태)))
 train.y <- as.numeric(train$주야)
 
-test.x <- data.matrix(test %>% select(c(요일, 발생지시도, 사고유형_대분류, 사고유형_중분류, 도로형태_대분류, 도로형태)))
+test.x <- data.matrix(test %>% select(c(요일, 발생지시도, 사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태_대분류, 도로형태)))
 test.y <- as.numeric(test$주야)
 
 mx.set.seed(2000)
 model <- mx.mlp(train.x, train.y, hidden_node=20, out_node=30, out_activation="softmax",
-                num.round=300, array.batch.size=50, learning.rate=0.01, momentum=0.9,
+                num.round=1000, array.batch.size=50, learning.rate=0.01, momentum=0.9,
                 eval.metric=mx.metric.accuracy, eval.data = list(data = test.x, label = test.y))
 
 preds = predict(model, test.x)

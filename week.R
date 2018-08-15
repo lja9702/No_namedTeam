@@ -1,5 +1,5 @@
 ## set PATH
-path <- "C:/Users/hj/Documents/dataset_kor"
+path <- "C:/Users/ehfkd/OneDrive/Documents/dataset_kor"
 
 ## set cran mirror 
 cran <- getOption("repos")
@@ -33,11 +33,11 @@ rm(file)
 test <- accident[1:5000, ]
 train <- accident[5001:nrow(accident), ]
 
-train.x <- data.matrix(train %>% select(c(주야, 발생지시도, 사고유형_대분류, 사고유형_중분류, 도로형태_대분류, 도로형태당사자종별_1당_대분류, 당사자종별_2당_대분류)))
-train.y <- as.numeric(train$주야)
+train.x <- data.matrix(train %>% select(c(주야, 사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태, 당사자종별_1당_대분류, 당사자종별_2당_대분류)))
+train.y <- as.numeric(train$요일)
 
-test.x <- data.matrix(test %>% select(c(주야, 발생지시도, 사고유형_대분류, 사고유형_중분류, 도로형태_대분류, 도로형태당사자종별_1당_대분류, 당사자종별_2당_대분류)))
-test.y <- as.numeric(test$주야)
+test.x <- data.matrix(test %>% select(c(주야, 사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태, 당사자종별_1당_대분류, 당사자종별_2당_대분류)))
+test.y <- as.numeric(test$요일)
 
 mx.set.seed(2000)
 model <- mx.mlp(train.x, train.y, hidden_node=20, out_node=30, out_activation="softmax",
