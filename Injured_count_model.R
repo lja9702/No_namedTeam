@@ -1,7 +1,6 @@
 install.packages("readxl")
 install.packages("ggplot2")
 install.packages("dplyr")
-
 cran <- getOption("repos")
 cran["dmlc"] <- "https://apache-mxnet.s3-accelerate.dualstack.amazonaws.com/R/CRAN/"
 options(repos = cran)
@@ -32,7 +31,7 @@ test.y <- test$사상자수
 set.seed(4444)
 mx.set.seed(4444)
 model <- mx.mlp(train.x, train.y, hidden_node=15, out_node=20, activation="relu", out_activation="softmax",
-                num.round=300, array.batch.size=50, learning.rate=0.01, momentum=0.9,
+                num.round=3000, array.batch.size=50, learning.rate=0.01, momentum=0.9,
                 eval.metric=mx.metric.accuracy, eval.data = list(data = test.x, label = test.y))
 #결과 :
 #Train-accuacy = 0.61797980146376
