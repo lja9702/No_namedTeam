@@ -151,3 +151,83 @@ accident <- left_join(accident, sigungu, by=c("발생지시군구"))
 accident$평균통행속도 <- ifelse(is.na(accident$평균통행속도), avg_speed, accident$평균통행속도)
 accident$사고건수 <- ifelse(is.na(accident$사고건수), avg_cnt, accident$사고건수)
 accident$시군구사상자수 <- ifelse(is.na(accident$시군구사상자수), avg_hurt, accident$시군구사상자수)
+
+
+
+## 발생지시도 모델
+acc <- accident
+acc$발생지시군구 <- as.factor(acc$발생지시군구)
+sample <- acc[1:20000, ]
+test <- acc[20001:nrow(acc), ]
+
+train.발생지시도.x <- scale(data.matrix(sample %>% dplyr::select(-발생지시도,c(-1:-5))))
+train.발생지시도.y <- as.numeric(sample$발생지시도)
+test.발생지시도.x <- scale(data.matrix(test %>% dplyr::select(-발생지시도,c(-1:-5))))
+test.발생지시도.y <- as.numeric(test$발생지시도)
+
+mx.set.seed(4444)
+balsido_model <- mx.mlp(train.발생지시도.x, train.발생지시도.y, hidden_node=100, out_node=17, activation="relu", out_activation="softmax",
+                num.round=400, array.batch.size=100, learning.rate=0.01, momentum=0.9,
+                eval.metric=mx.metric.accuracy, eval.data=list(data = test.발생지시도.x, label = test.발생지시도.y))
+
+preds = predict(balsido_model, test.발생지시도.x)
+pred.label = max.col(t(preds))-1
+table(pred.label, test.발생지시도.y)
+
+result <- cbind(as.data.frame(pred.label), as.data.frame(test.발생지시도.y))
+result_len <- nrow(result)
+result_correct <- nrow(result %>% filter(pred.label == test.발생지시도.y))
+result_correct/result_len # Accuracy
+
+
+## 발생지시군구 모델
+acc <- accident
+acc$발생지시군구 <- as.factor(acc$발생지시군구)
+sample <- acc[1:20000, ]
+test <- acc[20001:nrow(acc), ]
+
+train.발생지시군구.x <- data.matrix(sample %>% dplyr::select(-발생지시군구,c(-1:-5)))
+train.발생지시군구.y <- as.numeric(sample$발생지시군구)
+test.발생지시군구.x <- data.matrix(test %>% dplyr::select(-발생지시군구,c(-1:-5)))
+test.발생지시군구.y <- as.numeric(test$발생지시군구)
+
+mx.set.seed(4444)
+balsigungu_model <- mx.mlp(train.발생지시군구.x, train.발생지시군구.y, hidden_node=1000, out_node=209, activation="relu", out_activation="softmax",
+                    num.round=400, array.batch.size=100, learning.rate=0.01, momentum=0.9,
+                    eval.metric=mx.metric.accuracy, eval.data=list(data = test.발생지시군구.x, label = test.발생지시군구.y))
+
+preds = predict(balsigungu_model, test.발생지시군구.x)
+pred.label = max.col(t(preds))-1
+table(pred.label, test.발생지시군구.y)
+
+result <- cbind(as.data.frame(pred.label), as.data.frame(test.발생지시군구.y))
+result_len <- nrow(result)
+result_correct <- nrow(result %>% filter(pred.label == test.발생지시군구.y))
+result_correct/result_len # Accuracy
+
+
+## 도로형태_대분류 모델
+acc <- accident
+acc$발생지시군구 <- as.factor(acc$발생지시군구)
+sample <- acc[1:20000, ]
+test <- acc[20001:nrow(acc), ]
+
+train.도로형태_대분류.x <- data.matrix(sample %>% dplyr::select(-도로형태_대분류,c(-1:-5)))
+train.도로형태_대분류.y <- as.numeric(sample$도로형태_대분류)
+test.도로형태_대분류.x <- data.matrix(test %>% dplyr::select(-도로형태_대분류,c(-1:-5)))
+test.도로형태_대분류.y <- as.numeric(test$도로형태_대분류)
+
+mx.set.seed(4444)
+dorodae_model <- mx.mlp(train.도로형태_대분류.x, train.도로형태_대분류.y, hidden_node=1000, out_node=9, activation="relu", out_activation="softmax",
+                           num.round=400, array.batch.size=100, learning.rate=0.01, momentum=0.9,
+                           eval.metric=mx.metric.accuracy, eval.data=list(data = test.도로형태_대분류.x, label = test.도로형태_대분류.y))
+
+preds = predict(balsigungu_model, test.도로형태_대분류.x)
+pred.label = max.col(t(preds))-1
+table(pred.label, test.도로형태_대분류.y)
+
+result <- cbind(as.data.frame(pred.label), as.data.frame(test.도로형태_대분류.y))
+result_len <- nrow(result)
+result_correct <- nrow(result %>% filter(pred.label == test.도로형태_대분류.y))
+result_correct/result_len # Accuracy
+
