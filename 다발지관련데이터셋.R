@@ -3,7 +3,7 @@ olderGo <- read.csv("C:/Users/user/Documents/GitHub/No_namedTeam/05.보행노인
 childGo <- read.csv("C:/Users/user/Documents/GitHub/No_namedTeam/06.보행어린이사고다발지/보행어린이사고다발지(2012~2016).csv")
 schoolZoneGo <- read.csv("C:/Users/user/Documents/GitHub/No_namedTeam/07.스쿨존내사고다발지/스쿨존내어린이사고다발지(2012~2016).csv")
 cycleGo <- read.csv("C:/Users/user/Documents/GitHub/No_namedTeam/08.자전거사고다발지/자전거사고다발지(2012~2016).csv")
-
+library(dplyr)
 #다발지 데이터 축약 함수
 change_dabalJi_Data <- function(x, y){
   x$발생시도 <- NA
@@ -62,17 +62,22 @@ SeparateSchoolZoneGo <- schoolZoneGo %>% group_by(발생시도, 발생군구 , �
 ########보행어린이 사고다발지 관련 데이터########
 childGo <- change_dabalJi_Data(childGo, "보행어린이사고")
 
-#필요한 데이터들 묶은 스쿨존다발지 set
+#필요한 데이터들 묶은 보행어린이사고다발지 set
 SeparateChildGo <- childGo %>% group_by(발생시도, 발생군구 , 발생년) %>% summarise(sum어린이발생건 = sum(발생건수), sum어린이사망 = sum(사망자수), mean어린이사망 = sum(사망자수) / sum어린이발생건, sum어린이중상 = sum(중상자수), mean어린이중상 = sum(중상자수) / sum어린이발생건, sum어린이경상 = sum(경상자수), mean어린이경상 = sum(경상자수) / sum어린이발생건, sum어린이부상 = sum(부상신고자수), mean어린이부상 = sum(부상신고자수) / sum어린이발생건)
 
 ########보행노인 사고다발지 관련 데이터########
-olderGo <- change_dabalJi_Data(orderGo, "보행노인사고")
+olderGo <- change_dabalJi_Data(olderGo, "보행노인사고")
 
-#필요한 데이터들 묶은 스쿨존다발지 set
+#필요한 데이터들 묶은 보행노인 사고다발지 set
 SeparateOlderGo <- olderGo %>% group_by(발생시도, 발생군구 , 발생년) %>% summarise(sum노인발생건 = sum(발생건수), sum노인사망 = sum(사망자수), mean노인사망 = sum(사망자수) / sum노인발생건, sum노인중상 = sum(중상자수), mean노인중상 = sum(중상자수) / sum노인발생건, sum노인경상 = sum(경상자수), mean노인경상 = sum(경상자수) / sum노인발생건, sum노인부상 = sum(부상신고자수), mean노인부상 = sum(부상신고자수) / sum노인발생건)
 
 ########무단횡단 사고다발지 관련 데이터########
 mudanGo <- change_dabalJi_Data(mudanGo, "무단횡단사고")
 
-#필요한 데이터들 묶은 스쿨존다발지 set
+#필요한 데이터들 묶은 무단횡단 사고다발지 set
 SeparateMudanGorGo <- mudanGo %>% group_by(발생시도, 발생군구 , 발생년) %>% summarise(sum무단발생건 = sum(발생건수), sum무단사망 = sum(사망자수), mean무단사망 = sum(사망자수) / sum무단발생건, sum무단중상 = sum(중상자수), mean무단중상 = sum(중상자수) / sum무단발생건, sum무단경상 = sum(경상자수), mean무단경상 = sum(경상자수) / sum무단발생건, sum무단부상 = sum(부상신고자수), mean무단부상 = sum(부상신고자수) / sum무단발생건)
+
+temp <- left_join(SeparateChildGo, SeparateCycleGo)
+temp <- left_join(temp, SeparateMudanGorGo)
+temp <- left_join(temp, SeparateOlderGo)
+temp <- left_join(temp, SeparateSchoolZoneGo)
