@@ -56,7 +56,7 @@ SeparateCycleGo <- cycleGo %>% group_by(발생시도, 발생군구 , 발생년) 
 schoolZoneGo <- change_dabalJi_Data(schoolZoneGo, "스쿨존내사고")
 
 #필요한 데이터들 묶은 스쿨존다발지 set
-SeparateSchoolZoneGo <- schoolZoneGo %>% group_by(발생시도, 발생군구 , 발생년) %>% summarise(sum스쿨존발생건 = sum(발생건수), sum스쿨존사망 = sum(사망자수), mean스쿨존사망 = sum(사망자수) / sum스쿨존발생건, sum스쿨존중상 = sum(중상자수), mean스쿨존중상 = sum(중상자수) / sum스쿨존발생건, sum스쿨존경상 = sum(경상자수), mean스쿨존경상 = sum(경상자수) / sum스쿨존발생건, sum자전거부상 = sum(부상신고자수), mean스쿨존부상 = sum(부상신고자수) / sum스쿨존발생건)
+SeparateSchoolZoneGo <- schoolZoneGo %>% group_by(발생시도, 발생군구 , 발생년) %>% summarise(sum스쿨존발생건 = sum(발생건수), sum스쿨존사망 = sum(사망자수), mean스쿨존사망 = sum(사망자수) / sum스쿨존발생건, sum스쿨존중상 = sum(중상자수), mean스쿨존중상 = sum(중상자수) / sum스쿨존발생건, sum스쿨존경상 = sum(경상자수), mean스쿨존경상 = sum(경상자수) / sum스쿨존발생건, sum스쿨존부상 = sum(부상신고자수), mean스쿨존부상 = sum(부상신고자수) / sum스쿨존발생건)
 
 
 ########보행어린이 사고다발지 관련 데이터########
@@ -77,7 +77,46 @@ mudanGo <- change_dabalJi_Data(mudanGo, "무단횡단사고")
 #필요한 데이터들 묶은 무단횡단 사고다발지 set
 SeparateMudanGorGo <- mudanGo %>% group_by(발생시도, 발생군구 , 발생년) %>% summarise(sum무단발생건 = sum(발생건수), sum무단사망 = sum(사망자수), mean무단사망 = sum(사망자수) / sum무단발생건, sum무단중상 = sum(중상자수), mean무단중상 = sum(중상자수) / sum무단발생건, sum무단경상 = sum(경상자수), mean무단경상 = sum(경상자수) / sum무단발생건, sum무단부상 = sum(부상신고자수), mean무단부상 = sum(부상신고자수) / sum무단발생건)
 
-temp <- left_join(SeparateChildGo, SeparateCycleGo)
-temp <- left_join(temp, SeparateMudanGorGo)
-temp <- left_join(temp, SeparateOlderGo)
-temp <- left_join(temp, SeparateSchoolZoneGo)
+########다발지 데이터 하나로 묶기
+temp <- left_join(SeparateChildGo, SeparateCycleGo, by = c("발생시도", "발생군구", "발생년"))
+temp <- left_join(temp, SeparateMudanGorGo, by = c("발생시도", "발생군구", "발생년"))
+temp <- left_join(temp, SeparateOlderGo, by = c("발생시도", "발생군구", "발생년"))
+temp <- left_join(temp, SeparateSchoolZoneGo, by = c("발생시도", "발생군구", "발생년"))
+
+#결측치 모두 0으로 변경
+is.na(temp)
+temp[is.na(temp)] <- 0
+temp
+View(temp)
+
+#최다사고다발지 찾기
+total_dabalji_dataSet <- temp
+total_dabalji_dataSet$최다다발지 <- NA
+for(i in 1:nrow(total_dabalji_dataSet)){
+  tnum = -1
+  maxdabal = NA
+  if(total_dabalji_dataSet[i, "sum어린이발생건"] > 0 && tnum < total_dabalji_dataSet[i, "sum어린이발생건"]){
+    tnum = total_dabalji_dataSet[i, "sum어린이발생건"]
+    maxdabal = "최다보행어린이사고다발지"
+  }
+  if(total_dabalji_dataSet[i, "sum자전거발생건"] > 0 &&tnum < total_dabalji_dataSet[i, "sum자전거발생건"]){
+    tnum = total_dabalji_dataSet[i, "sum자전거발생건"]
+    maxdabal = "최다자전거사고다발지"
+  }
+  if(total_dabalji_dataSet[i, "sum무단발생건"] > 0 && tnum < total_dabalji_dataSet[i, "sum무단발생건"]){
+    tnum = total_dabalji_dataSet[i, "sum무단발생건"]
+    maxdabal = "최다무단횡단사고다발지"
+  }
+  if(total_dabalji_dataSet[i, "sum노인발생건"] > 0 && tnum < total_dabalji_dataSet[i, "sum노인발생건"]){
+    tnum = total_dabalji_dataSet[i, "sum노인발생건"]
+    maxdabal = "최다보행노인사고다발지"
+  }
+  if(total_dabalji_dataSet[i, "sum스쿨존발생건"] > 0 && tnum < total_dabalji_dataSet[i, "sum스쿨존발생건"]){
+    tnum = total_dabalji_dataSet[i, "sum스쿨존발생건"]
+    maxdabal = "최다스쿨존내사고다발지"
+  }
+  
+  if(tnum != -1) total_dabalji_dataSet[i, "최다다발지"] <- maxdabal
+  else total_dabalji_dataSet[i, "최다다발지"] <- "없음"
+}
+
