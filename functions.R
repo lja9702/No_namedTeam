@@ -141,3 +141,110 @@ accident_type <- function(path, learning_rate, out_node, hidden_node, round, see
   
   return(model)
 }
+
+
+
+# 발생시도
+# sido(path, 0.01, 17, 100, 400, 4444)
+sido <- function(path, learning_rate, out_node, hidden_node, round, seed) {
+  
+  file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
+
+  acc <- read.csv(paste(path, file, sep="/"))
+  acc$발생지시군구 <- as.factor(acc$발생지시군구)
+  sample <- acc[1:20000, ]
+  test <- acc[20001:nrow(acc), ]
+  
+  train.x <- scale(data.matrix(sample %>% dplyr::select(-발생지시도,c(-1:-5))))
+  train.y <- as.numeric(sample$발생지시도)
+  test.x <- scale(data.matrix(test %>% dplyr::select(-발생지시도,c(-1:-5))))
+  test.y <- as.numeric(test$발생지시도)
+  
+  mx.set.seed(seed)
+  model <- mx.mlp(train.x, train.y, hidden_node=hidden_node, out_node=out_node, activation="relu", out_activation="softmax",
+                          num.round=round, array.batch.size=100, learning.rate=learning_rate, momentum=0.9,
+                          eval.metric=mx.metric.accuracy, eval.data=list(data = test.x, label = test.y))
+  return (model)
+}
+
+
+# 발생시군구
+# sigungu(path, 0.01, 209, 1000, 400, 4444)
+sigungu <- function(path, learning_rate, out_node, hidden_node, round, seed) {
+
+  file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
+  
+  acc <- read.csv(paste(path, file, sep="/"))
+  acc$발생지시군구 <- as.factor(acc$발생지시군구)
+  sample <- acc[1:20000, ]
+  test <- acc[20001:nrow(acc), ]
+  
+  train.x <- data.matrix(sample %>% dplyr::select(-발생지시군구,c(-1:-5)))
+  train.y <- as.numeric(sample$발생지시군구)
+  test.x <- data.matrix(test %>% dplyr::select(-발생지시군구,c(-1:-5)))
+  test.y <- as.numeric(test$발생지시군구)
+  
+  mx.set.seed(seed)
+  model <- mx.mlp(train.x, train.y, hidden_node=hidden_node, out_node=out_node, activation="relu", out_activation="softmax",
+                             num.round=round, array.batch.size=100, learning.rate=learning_rate, momentum=0.9,
+                             eval.metric=mx.metric.accuracy, eval.data=list(data = test.x, label = test.y))
+
+  return (model)  
+}
+
+# 도로형태_대분류
+# main_road_type(path, 0.01, 9, 1000, 400, 4444)
+main_road_type <- function(path, learning_rate, out_node, hidden_node, round, seed) {
+  
+  file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
+  
+  acc <- read.csv(paste(path, file, sep="/"))
+  acc$발생지시군구 <- as.factor(acc$발생지시군구)
+  sample <- acc[1:20000, ]
+  test <- acc[20001:nrow(acc), ]
+  
+  train.x <- data.matrix(sample %>% dplyr::select(-도로형태_대분류,c(-1:-5)))
+  train.y <- as.numeric(sample$도로형태_대분류)
+  test.x <- data.matrix(test %>% dplyr::select(-도로형태_대분류,c(-1:-5)))
+  test.y <- as.numeric(test$도로형태_대분류)
+  
+  mx.set.seed(seed)
+  model <- mx.mlp(train.x, train.y, hidden_node=hidden_node, out_node=out_node, activation="relu", out_activation="softmax",
+                          num.round=round, array.batch.size=100, learning.rate=learning_rate, momentum=0.9,
+                          eval.metric=mx.metric.accuracy, eval.data=list(data = test.x, label = test.y))
+  
+  return (model)
+}
+
+# 도로형태
+# detail_road_type(path, 0.01, 16, 1000, 400, 4444)
+detail_road_type <- function(path, learning_rate, out_node, hidden_node, round, seed) {
+  
+  file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
+  
+  acc <- read.csv(paste(path, file, sep="/"))
+  acc$발생지시군구 <- as.factor(acc$발생지시군구)
+  sample <- acc[1:20000, ]
+  test <- acc[20001:nrow(acc), ]
+  
+  train.x <- data.matrix(sample %>% dplyr::select(-도로형태,c(-1:-5)))
+  train.y <- as.numeric(sample$도로형태)
+  test.x <- data.matrix(test %>% dplyr::select(-도로형태,c(-1:-5)))
+  test.y <- as.numeric(test$도로형태)
+  
+  mx.set.seed(seed)
+  model <- mx.mlp(train.x, train.y, hidden_node=hidden_node, out_node=out_node, activation="relu", out_activation="softmax",
+                  num.round=round, array.batch.size=100, learning.rate=learning_rate, momentum=0.9,
+                  eval.metric=mx.metric.accuracy, eval.data=list(data = test.x, label = test.y))
+  
+  return (model)
+
+  #preds = predict(balsido_model, test.x)
+  #pred.label = max.col(t(preds))-1
+  #table(pred.label, test.y)
+  
+  #result <- cbind(as.data.frame(pred.label), as.data.frame(test.y))
+  #result_len <- nrow(result)
+  #result_correct <- nrow(result %>% filter(pred.label == test.y))
+  #result_correct/result_len # Accuracy
+}
