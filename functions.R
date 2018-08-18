@@ -95,8 +95,8 @@ injury_cnt <- function(path, learning_rate, out_node, hidden_node, round, seed)
   test.x <- data.matrix(test %>% dplyr::select(c(4,6,14,16,17,18,19,20,22)))
   test.y <- test$사상자수
   
-  set.seed(4444)
-  mx.set.seed(4444)
+  set.seed(seed)
+  mx.set.seed(seed)
   model <- mx.mlp(train.x, train.y, hidden_node=hidden_node, out_node=out_node, out_activation="softmax",
                   num.round=round, array.batch.size=50, learning.rate=learning_rate, momentum=0.9,
                   eval.metric=mx.metric.accuracy, eval.data = list(data = test.x, label = test.y))
