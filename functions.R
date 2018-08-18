@@ -102,3 +102,42 @@ injury_cnt <- function(path, learning_rate, out_node, hidden_node, round, seed)
                   eval.metric=mx.metric.accuracy, eval.data = list(data = test.x, label = test.y))
   return (model)
 }
+
+# 사고유형
+# accident_type(path="", learning_rate=0.07, out_node=22, hidden_node=10, round=130, seed=0)
+accident_type <- function(path, learning_rate, out_node, hidden_node, round, seed) {
+  
+  file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
+  
+  accident <- read.csv(paste(path, file, sep="/"))
+
+  #1당 2당 소분류 필요없어서 제외
+  accident <- accident[,-21]
+  accident <- accident[,-22]
+
+  #진아_ 사고유형별 사망, 사상, 중상, 경상, 부상신고자 수 딥러닝
+  accident.temp <- cbind(accident$사망자수, accident$중상자수, accident$경상자수, accident$부상신고자수, accident$당사자종별_1당, accident$당사자종별_2당, accident$법규위반)
+  colnames(accident.temp) <- c("사망자수", "중상자수", "경상자수", "부상신고자수", "당사자종별_1당", "당사자종별_2당", "법규위반")
+  accident.temp <- as.data.frame(accident.temp)
+  
+  accident.temp$사망자수 <- as.numeric(accident.temp$사망자수)
+  accident.temp$중상자수 <- as.numeric(accident.temp$중상자수)
+  accident.temp$경상자수 <- as.numeric(accident.temp$경상자수)
+  accident.temp$부상신고자수 <- as.numeric(accident.temp$부상신고자수)
+  
+  sagou.temp <- as.data.frame(accident$사고유형)
+  colnames(sagou.temp) <- c("사고유형")
+  accident.scale <- cbind(accident.temp, sagou.temp)
+  accident.scale[, 8] <- as.numeric(accident.scale[, 8])
+  
+  acsample <- sample(1:nrow(accident.scale), size = round(0.2 * nrow(accident.scale)))
+  test.x <- data.matrix(accident.scale[acsample, 1: 7])
+  test.y <- accident.scale[acsample, 8]
+  train.x <- data.matrix(accident.scale[-acsample, 1:7])
+  train.y <- accident.scale[-acsample, 8]
+  # 41%정확도
+  mx.set.seed(seed)
+  model <- mx.mlp(train.x, train.y, hidden_node=hidden_node, out_node=out_node, out_activation="softmax", num.round=round, array.batch.size=200, learning.rate=learning_rate, momentum=0.75, eval.metric=mx.metric.accuracy)
+  
+  return(model)
+}
