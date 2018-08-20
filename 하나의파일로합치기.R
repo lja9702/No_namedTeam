@@ -16,11 +16,9 @@ require(mlbench)
 require(mxnet)
 rm(cran)
 
-##########################################################################################경로지정
-path = commandArgs(trailingOnly = TRUE)
-
-##########################################################################################함수등ㄹ
+##########################################################################################함수등록
 # 주야
+# day_night(path, 0.01, 30, 20, round, 2000)
 day_night <- function(path, learning_rate, out_node, hidden_node, round, seed)
 {
   file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
@@ -48,6 +46,7 @@ day_night <- function(path, learning_rate, out_node, hidden_node, round, seed)
 }
 
 # 요일
+# week(path, 0.01, 30, 20, round, 2000)
 week <- function(path, learning_rate, out_node, hidden_node, round, seed)
 {
   file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
@@ -75,6 +74,7 @@ week <- function(path, learning_rate, out_node, hidden_node, round, seed)
 }
 
 # 법규위반
+# violation(path, 0.01, 30, 20, round, 2000)
 violation <- function(path, learning_rate, out_node, hidden_node, round, seed)
 {
   file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
@@ -164,8 +164,6 @@ accident_type <- function(path, learning_rate, out_node, hidden_node, round, see
   return(model)
 }
 
-
-
 # 발생시도
 # sido(path, 0.01, 17, 100, 400, 4444)
 sido <- function(path, learning_rate, out_node, hidden_node, round, seed) {
@@ -188,7 +186,6 @@ sido <- function(path, learning_rate, out_node, hidden_node, round, seed) {
                   eval.metric=mx.metric.accuracy, eval.data=list(data = test.x, label = test.y))
   return (model)
 }
-
 
 # 발생시군구
 # sigungu(path, 0.01, 209, 1000, 400, 4444)
@@ -272,7 +269,7 @@ detail_road_type <- function(path, learning_rate, out_node, hidden_node, round, 
 }
 
 speed_subset_data <- function(path) {
-  accident <- read.csv(paste(path, 'Train_교통사망사고정보(12.1~17.6).csv', sep="/"))
+  accident <- read.csv(paste(path, 'Kor_Train_교통사망사고정보(12.1~17.6).csv', sep="/"))
   road <- readxl::read_xlsx(paste(path, '보조데이터/03.서울시 도로 링크별 교통 사고발생 수/서울시 도로링크별 교통사고(2015~2017).xlsx', sep="/"))
   speed_path <- paste(path, "보조데이터/01.서울시 차량 통행 속도", sep="/")
   # 진기 코드/
@@ -384,3 +381,21 @@ speed_subset_data <- function(path) {
   #accident$사고건수 <- ifelse(is.na(accident$사고건수), avg_cnt, accident$사고건수)
   #accident$시군구사상자수 <- ifelse(is.na(accident$시군구사상자수), avg_hurt, accident$시군구사상자수)
 }
+
+########################################################################################## 메인함수
+path = commandArgs(trailingOnly = TRUE)
+
+# 보조데이터 생성
+speed_subset <- speed_subset_data(path)
+
+# Make model
+day_night_model <- day_night(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+week_model <- week(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+violation_model <- violation(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+injury_cnt_model <- injury_cnt(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+accident_type_model <- accident_type(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+sido_model <- sido(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+sigungu_model <- sigungu(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+main_road_type_model <- main_road_type(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+detail_road_type_model <- detail_road_type(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+
