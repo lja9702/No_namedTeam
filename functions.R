@@ -1,4 +1,5 @@
 # 주야
+# day_night(path, 0.01, 30, 20, round, 2000)
 day_night <- function(path, learning_rate, out_node, hidden_node, round, seed)
 {
   file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
@@ -25,7 +26,8 @@ day_night <- function(path, learning_rate, out_node, hidden_node, round, seed)
   return(model)
 }
 
-# 요이
+# 요일
+# week(path, 0.01, 30, 20, round, 2000)
 week <- function(path, learning_rate, out_node, hidden_node, round, seed)
 {
   file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
@@ -53,6 +55,7 @@ week <- function(path, learning_rate, out_node, hidden_node, round, seed)
 }
 
 # 법규위반
+# violation(path, 0.01, 30, 20, round, 2000)
 violation <- function(path, learning_rate, out_node, hidden_node, round, seed)
 {
   file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
@@ -110,11 +113,11 @@ accident_type <- function(path, learning_rate, out_node, hidden_node, round, see
   file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
   
   accident <- read.csv(paste(path, file, sep="/"))
-
+  
   #1당 2당 소분류 필요없어서 제외
   accident <- accident[,-21]
   accident <- accident[,-22]
-
+  
   #진아_ 사고유형별 사망, 사상, 중상, 경상, 부상신고자 수 딥러닝
   accident.temp <- cbind(accident$사망자수, accident$중상자수, accident$경상자수, accident$부상신고자수, accident$당사자종별_1당, accident$당사자종별_2당, accident$법규위반)
   colnames(accident.temp) <- c("사망자수", "중상자수", "경상자수", "부상신고자수", "당사자종별_1당", "당사자종별_2당", "법규위반")
@@ -149,7 +152,7 @@ accident_type <- function(path, learning_rate, out_node, hidden_node, round, see
 sido <- function(path, learning_rate, out_node, hidden_node, round, seed) {
   
   file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
-
+  
   acc <- read.csv(paste(path, file, sep="/"))
   acc$발생지시군구 <- as.factor(acc$발생지시군구)
   sample <- acc[1:20000, ]
@@ -162,8 +165,8 @@ sido <- function(path, learning_rate, out_node, hidden_node, round, seed) {
   
   mx.set.seed(seed)
   model <- mx.mlp(train.x, train.y, hidden_node=hidden_node, out_node=out_node, activation="relu", out_activation="softmax",
-                          num.round=round, array.batch.size=100, learning.rate=learning_rate, momentum=0.9,
-                          eval.metric=mx.metric.accuracy, eval.data=list(data = test.x, label = test.y))
+                  num.round=round, array.batch.size=100, learning.rate=learning_rate, momentum=0.9,
+                  eval.metric=mx.metric.accuracy, eval.data=list(data = test.x, label = test.y))
   return (model)
 }
 
@@ -171,7 +174,7 @@ sido <- function(path, learning_rate, out_node, hidden_node, round, seed) {
 # 발생시군구
 # sigungu(path, 0.01, 209, 1000, 400, 4444)
 sigungu <- function(path, learning_rate, out_node, hidden_node, round, seed) {
-
+  
   file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
   
   acc <- read.csv(paste(path, file, sep="/"))
@@ -186,9 +189,9 @@ sigungu <- function(path, learning_rate, out_node, hidden_node, round, seed) {
   
   mx.set.seed(seed)
   model <- mx.mlp(train.x, train.y, hidden_node=hidden_node, out_node=out_node, activation="relu", out_activation="softmax",
-                             num.round=round, array.batch.size=100, learning.rate=learning_rate, momentum=0.9,
-                             eval.metric=mx.metric.accuracy, eval.data=list(data = test.x, label = test.y))
-
+                  num.round=round, array.batch.size=100, learning.rate=learning_rate, momentum=0.9,
+                  eval.metric=mx.metric.accuracy, eval.data=list(data = test.x, label = test.y))
+  
   return (model)  
 }
 
@@ -210,8 +213,8 @@ main_road_type <- function(path, learning_rate, out_node, hidden_node, round, se
   
   mx.set.seed(seed)
   model <- mx.mlp(train.x, train.y, hidden_node=hidden_node, out_node=out_node, activation="relu", out_activation="softmax",
-                          num.round=round, array.batch.size=100, learning.rate=learning_rate, momentum=0.9,
-                          eval.metric=mx.metric.accuracy, eval.data=list(data = test.x, label = test.y))
+                  num.round=round, array.batch.size=100, learning.rate=learning_rate, momentum=0.9,
+                  eval.metric=mx.metric.accuracy, eval.data=list(data = test.x, label = test.y))
   
   return (model)
 }
@@ -238,7 +241,7 @@ detail_road_type <- function(path, learning_rate, out_node, hidden_node, round, 
                   eval.metric=mx.metric.accuracy, eval.data=list(data = test.x, label = test.y))
   
   return (model)
-
+  
   #preds = predict(balsido_model, test.x)
   #pred.label = max.col(t(preds))-1
   #table(pred.label, test.y)
