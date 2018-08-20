@@ -24,6 +24,29 @@ add_last_sep_path <- function(path) {
   }
 }
 
+#테스트 데이터의 ""값을 NA로 변환. test_path는 test_dataSet의 경로
+presetting_testdata <- function(test_path){
+  x <- read.csv(test_path)
+  for(i in 1:ncol(x)){
+    temp <- as.character(x[, i])
+    temp[!nzchar(temp)] <- NA
+    x[, i] <- as.factor(temp)
+  }
+  x
+}
+
+predict_y <- function(model, testdata) {
+  preds = predict(model, testdata)
+  pred.label = max.col(t(preds))-1
+  #table(pred.label, test.y)
+  return(pred.label)
+  
+  #result <- cbind(as.data.frame(pred.label), as.data.frame(test.y))
+  #result_len <- nrow(result)
+  #result_correct <- nrow(result %>% filter(pred.label == test.y))
+  #result_correct/result_len # Accuracy
+}
+
 ########################################################################################## 메인함수
 # 실행시
 # Rscript --vanilla main.R <model directory path> <test_kor csv file> <result_kor csv file>
@@ -43,8 +66,12 @@ sigungu_model <- readRDS(paste(model_dir_path, "sigungu_model.rds", sep=""))
 main_road_type_model <- readRDS(paste(model_dir_path, "main_road_type_model.rds", sep=""))
 detail_road_type_model <- readRDS(paste(model_dir_path, "detail_road_type_model.rds", sep=""))
 
-# TODO: input test_kor to models
+test_data <- presetting_testdata(testdata_file)
+result_data <- read.csv(resultdata_file)
 
-# TODO: read result_kor and put result data
+# TODO: input test_kor to models
+# predict_y(day_night_model, ~~~)
+
+# TODO: put result data
 
 # TODO: save to result_kor

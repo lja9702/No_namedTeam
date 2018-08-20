@@ -257,15 +257,6 @@ detail_road_type <- function(path, learning_rate, out_node, hidden_node, round, 
                   eval.metric=mx.metric.accuracy, eval.data=list(data = test.x, label = test.y))
   
   return (model)
-  
-  #preds = predict(balsido_model, test.x)
-  #pred.label = max.col(t(preds))-1
-  #table(pred.label, test.y)
-  
-  #result <- cbind(as.data.frame(pred.label), as.data.frame(test.y))
-  #result_len <- nrow(result)
-  #result_correct <- nrow(result %>% filter(pred.label == test.y))
-  #result_correct/result_len # Accuracy
 }
 
 speed_subset_data <- function(path) {
