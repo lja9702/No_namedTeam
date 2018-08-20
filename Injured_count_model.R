@@ -14,23 +14,23 @@ library(mxnet)
 
 accident <- read.csv('Kor_Train_교통사망사고정보(12.1~17.6).csv')
 
-test <- accident[1:5000, ]
-train <- accident[5001:nrow(accident),]
+test <- accident_and_subdataSet[1:5000, ]
+train <- accident_and_subdataSet[5001:nrow(accident_and_subdataSet),]
 
 sample <- train %>% filter(사상자수 != 1) # 사상자 수가 1인 경우를 제외한 데이터
 sample_one <- train %>% filter(사상자수 == 1)
 sample_one <- sample_one[sample(1:nrow(sample_one),2500),]
 sample <- rbind(sample, sample_one)
 
-train.x <- data.matrix(sample %>% dplyr::select(c(4,6,14,16,17,18,19,20,22)))
+train.x <- data.matrix(sample %>% dplyr::select(c(4,6,14,16,17,18,19,20,22,27,28,26,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70)))
 train.y <- sample$사상자수
 
-test.x <- data.matrix(test %>% dplyr::select(c(4,6,14,16,17,18,19,20,22)))
+test.x <- data.matrix(test %>% dplyr::select(c(4,6,14,16,17,18,19,20,22,27,28,26,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70)))
 test.y <- test$사상자수
 
 set.seed(4444)
 mx.set.seed(4444)
-model <- mx.mlp(train.x, train.y, hidden_node=1000, out_node=500, activation="relu", out_activation="softmax",
+model <- mx.mlp(train.x, train.y, hidden_node=100, out_node=50, activation="relu", out_activation="softmax",
                 num.round=1500, array.batch.size=50, learning.rate=0.001, momentum=0.9,
                 eval.metric=mx.metric.accuracy, eval.data = list(data = test.x, label = test.y))
 #결과 :
