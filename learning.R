@@ -269,7 +269,7 @@ detail_road_type <- function(path, learning_rate, out_node, hidden_node, round, 
 }
 
 speed_subset_data <- function(path) {
-  accident <- read.csv(paste(path, 'Kor_Train_교통사망사고정보(12.1~17.6).csv', sep="/"))
+  accident <- read.csv(paste(path, '교통사망사고정보/Kor_Train_교통사망사고정보(12.1~17.6).csv', sep="/"))
   road <- readxl::read_xlsx(paste(path, '보조데이터/03.서울시 도로 링크별 교통 사고발생 수/서울시 도로링크별 교통사고(2015~2017).xlsx', sep="/"))
   speed_path <- paste(path, "보조데이터/01.서울시 차량 통행 속도", sep="/")
   # 진기 코드/
@@ -382,20 +382,38 @@ speed_subset_data <- function(path) {
   #accident$시군구사상자수 <- ifelse(is.na(accident$시군구사상자수), avg_hurt, accident$시군구사상자수)
 }
 
-########################################################################################## 메인함수
-path = commandArgs(trailingOnly = TRUE)
+learning_all_models <- function(path) {
+  
+  # 보조데이터 생성
+  speed_subset <- speed_subset_data(path)
+  
+  # Make model
+  day_night_model <- day_night(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+  week_model <- week(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+  violation_model <- violation(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+  injury_cnt_model <- injury_cnt(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+  accident_type_model <- accident_type(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+  sido_model <- sido(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+  sigungu_model <- sigungu(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+  main_road_type_model <- main_road_type(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+  detail_road_type_model <- detail_road_type(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+  
+  # 저장
+  mkdir("models")
+  saveRDS(day_night_model, "models/day_night_model.rds")
+  saveRDS(week_model, "models/week_model.rds")
+  saveRDS(violation_model, "models/violation_model.rds")
+  saveRDS(injury_cnt_model, "models/injury_cnt_model.rds")
+  saveRDS(accident_type_model, "models/accident_type_model.rds")
+  saveRDS(sido_model, "models/sido_model.rds")
+  saveRDS(sigungu_model, "models/sigungu_model.rds")
+  saveRDS(main_road_type_model, "models/main_road_type_model.rds")
+  saveRDS(detail_road_type_model, "models/detail_road_type_model.rds")
+}
 
-# 보조데이터 생성
-speed_subset <- speed_subset_data(path)
+# 실행시
+# Rscript --vanilla learning.R <dataset_kor directory path>
+args = commandArgs(trailingOnly = TRUE)
+dataset_kor_path = args[1]
 
-# Make model
-day_night_model <- day_night(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
-week_model <- week(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
-violation_model <- violation(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
-injury_cnt_model <- injury_cnt(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
-accident_type_model <- accident_type(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
-sido_model <- sido(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
-sigungu_model <- sigungu(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
-main_road_type_model <- main_road_type(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
-detail_road_type_model <- detail_road_type(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
-
+learning_all_models(datset_kor_path)
