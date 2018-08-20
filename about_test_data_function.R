@@ -1,21 +1,6 @@
-#NA데이터 위치를 저장하는 함수 x는 ,기준으로 저장된 NA좌표리스트
-check_and_Save_NA <- function(dataSet){  
-  x <- list()
-  for(i in 1:nrow(dataSet)){
-    temp <- c()
-    for(j in 1:ncol(dataSet)){
-      if(is.na(dataSet[i, j]) == TRUE){
-        temp <- append(temp, as.character(j))
-      }
-    }
-    x <- append(x, paste(temp, collapse=","))
-  }
-  x
-}
-
-#테스트 데이터의 ""값을 NA로 변환. test_path는 test_dataSet의 경로
-presetting_testdata <- function(test_path){
-  x <- read.csv(test_path)
+#테스트 데이터의 ""값을 NA로 변환 x는 test_data를 리턴해줄 매개인자, y는 test_dataSet의 경로
+presetting_testdata <- function(x, y){
+  x <- read.csv(y)
   for(i in 1:ncol(x)){
     temp <- as.character(x[, i])
     temp[!nzchar(temp)] <- NA
@@ -25,8 +10,7 @@ presetting_testdata <- function(test_path){
 }
 
 
-# using example
-testData <- presetting_testdata("~/GitHub/No_namedTeam/test_kor.csv")   #경로 변경할 것
+testData <- presetting_testdata(testData, "~/GitHub/No_namedTeam/test_kor.csv")   #경로 변경할 것
 NaList <- check_and_Save_NA(testData)
 
 #테스트데이터의 col별 번호와 카테고리
@@ -47,6 +31,21 @@ get_naData_col_row_res <- function(x, y){  #x는 NAList, y는 모델을 돌린 �
   }
 }
 
+#NA데이터 위치를 저장하는 함수 x는 ,기준으로 구분된 NA좌표리스트
+check_and_Save_NA <- function(dataSet){  
+  x <- list()
+  for(i in 1:nrow(dataSet)){
+    temp <- c()
+    for(j in 1:ncol(dataSet)){
+      if(is.na(dataSet[i, j]) == TRUE){
+        temp <- append(temp, as.character(j))
+      }
+    }
+    x <- append(x, paste(temp, collapse=","))
+  }
+  x
+}
+
 resultData <- read.csv("~/GitHub/No_namedTeam/result_kor.csv")
 
 read_res_and_input <- function(x, y){ #x가 result_kor데이터셋, y가 testDataSet
@@ -59,3 +58,22 @@ read_res_and_input <- function(x, y){ #x가 result_kor데이터셋, y가 testDat
 }
 
 get_naData_col_row_res(NaList, testData)
+
+
+fill_seouldata <- function(testData_Onerow, seoulMeanData){
+  if(is.na(testData_Onerow$사망자수) == TRUE){ 
+    testData_Onerow$사망자수 <- (seoulMeanData %>% filter(시군구 == testData_Onerow$발생지시군구))$사망자수
+  }
+  if(is.na(testData_Onerow$사상자수) == TRUE){
+    testData_Onerow$사망자수 <- (seoulMeanData %>% filter(시군구 == testData_Onerow$발생지시군구))$사상자수
+  }
+  if(is.na(testData_Onerow$중상자수) == TRUE){
+    testData_Onerow$사망자수 <- (seoulMeanData %>% filter(시군구 == testData_Onerow$발생지시군구))$중상자수
+  }
+  if(is.na(testData_Onerow$경상자수) == TRUE){
+    testData_Onerow$사망자수 <- (seoulMeanData %>% filter(시군구 == testData_Onerow$발생지시군구))$경상자수
+  }
+  if(is.na(testData_Onerow$부상신고자수) == TRUE){
+    testData_Onerow$사망자수 <- (seoulMeanData %>% filter(시군구 == testData_Onerow$발생지시군구))$부상신고자수
+  }
+}
