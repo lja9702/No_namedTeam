@@ -1,6 +1,6 @@
 library(dplyr)
 
-#다발지 데이터 축약 함수
+#다발지 데이터 축약 함수 
 change_dabalJi_Data <- function(x, y){
   x$발생지시도 <- NA
   x$발생지시군구 <- NA
@@ -152,7 +152,7 @@ dabalji_subset <- function(git_path="C:/Users/user/Documents/GitHub/No_namedTeam
   temp[is.na(temp)] <- 0
   ttemp<- gsub(0, "없음", temp$최다다발지)
   temp$최다다발지 <- ttemp
-  
+  temp <- temp %>% filter(temp$최다다발지 != "없음")
   temp
 }
 
