@@ -15,10 +15,10 @@ require(mlbench)
 require(mxnet)
 rm(cran)
 
-speed_subset_data <- function(git_path="C:/Users/Administrator/Downloads/dataset_kor") {
-  accident <- read.csv(paste(git_path, 'Train_교통사망사고정보(12.1~17.6).csv', sep="/"))
-  road <- readxl::read_xlsx(paste(git_path, '보조데이터/03.서울시 도로 링크별 교통 사고발생 수/서울시 도로링크별 교통사고(2015~2017).xlsx', sep="/"))
-  speed_path <- paste(git_path, "보조데이터/01.서울시 차량 통행 속도", sep="/")
+speed_subset_data <- function(path) {
+  accident <- read.csv(paste(path, 'Train_교통사망사고정보(12.1~17.6).csv', sep="/"))
+  road <- readxl::read_xlsx(paste(path, '보조데이터/03.서울시 도로 링크별 교통 사고발생 수/서울시 도로링크별 교통사고(2015~2017).xlsx', sep="/"))
+  speed_path <- paste(path, "보조데이터/01.서울시 차량 통행 속도", sep="/")
   # 진기 코드/
   file_csv_01 <- list.files(paste(speed_path, "/", sep=""), pattern="*.csv")
   file_CSV_01 <- list.files(paste(speed_path, "/", sep=""), pattern="*.CSV")
