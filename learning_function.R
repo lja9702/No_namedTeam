@@ -1,20 +1,7 @@
-#########################################################################################라이브러리설치
-cran <- getOption("repos")
-cran["dmlc"] <- "https://apache-mxnet.s3-accelerate.dualstack.amazonaws.com/R/CRAN/"
-options(repos = cran)
-install.packages('mlbench')
-install.packages("mxnet")
-install.packages('readxl')
-install.packages('randomForest')
-install.packages('MASS')
-install.packages('dplyr')
-require(readxl)
-require(randomForest)
-require(MASS)
-require(dplyr)
-require(mlbench)
-require(mxnet)
-rm(cran)
+
+source("./setup_lib.R", encoding="utf-8")
+
+source("./make_x.R", encoding="utf-8")
 
 ##########################################################################################함수등록
 # 주야
@@ -27,10 +14,10 @@ day_night <- function(path, learning_rate, out_node, hidden_node, round, seed)
   test <- accident[1:5000, ]
   train <- accident[5001:nrow(accident), ]
   
-  train.x <- data.matrix(train %>% select(c(요일, 발생지시도, 사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태_대분류, 도로형태)))
+  train.x <- day_night_x(train)
   train.y <- as.numeric(train$주야)
   
-  test.x <- data.matrix(test %>% select(c(요일, 발생지시도, 사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태_대분류, 도로형태)))
+  test.x <- day_night_x(test)
   test.y <- as.numeric(test$주야)
   
   mx.set.seed(seed)
@@ -131,7 +118,7 @@ accident_type <- function(path, learning_rate, out_node, hidden_node, round, see
   
   file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
   
-  accident <- read.csv(paste(path, file, sep="/"))
+  accident <- read.csv(paste(path, file, sep=""))
   
   #1당 2당 소분류 필요없어서 제외
   accident <- accident[,-21]
@@ -170,14 +157,14 @@ sido <- function(path, learning_rate, out_node, hidden_node, round, seed) {
   
   file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
   
-  acc <- read.csv(paste(path, file, sep="/"))
+  acc <- read.csv(paste(path, file, sep=""))
   acc$발생지시군구 <- as.factor(acc$발생지시군구)
   sample <- acc[1:20000, ]
   test <- acc[20001:nrow(acc), ]
   
-  train.x <- scale(data.matrix(sample %>% dplyr::select(-발생지시도,c(-1:-5))))
+  train.x <- sido_x(sample)
   train.y <- as.numeric(sample$발생지시도)
-  test.x <- scale(data.matrix(test %>% dplyr::select(-발생지시도,c(-1:-5))))
+  test.x <- sido_x(test)
   test.y <- as.numeric(test$발생지시도)
   
   mx.set.seed(seed)
@@ -193,14 +180,14 @@ sigungu <- function(path, learning_rate, out_node, hidden_node, round, seed) {
   
   file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
   
-  acc <- read.csv(paste(path, file, sep="/"))
+  acc <- read.csv(paste(path, file, sep=""))
   acc$발생지시군구 <- as.factor(acc$발생지시군구)
   sample <- acc[1:20000, ]
   test <- acc[20001:nrow(acc), ]
   
-  train.x <- data.matrix(sample %>% dplyr::select(-발생지시군구,c(-1:-5)))
+  train.x <- sigungu_x(sample)
   train.y <- as.numeric(sample$발생지시군구)
-  test.x <- data.matrix(test %>% dplyr::select(-발생지시군구,c(-1:-5)))
+  test.x <- sigungu_x(test)
   test.y <- as.numeric(test$발생지시군구)
   
   mx.set.seed(seed)
@@ -217,14 +204,14 @@ main_road_type <- function(path, learning_rate, out_node, hidden_node, round, se
   
   file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
   
-  acc <- read.csv(paste(path, file, sep="/"))
+  acc <- read.csv(paste(path, file, sep=""))
   acc$발생지시군구 <- as.factor(acc$발생지시군구)
   sample <- acc[1:20000, ]
   test <- acc[20001:nrow(acc), ]
   
-  train.x <- data.matrix(sample %>% dplyr::select(-도로형태_대분류,c(-1:-5)))
+  train.x <- main_road_type_x(sample)
   train.y <- as.numeric(sample$도로형태_대분류)
-  test.x <- data.matrix(test %>% dplyr::select(-도로형태_대분류,c(-1:-5)))
+  test.x <- main_road_type_x(test)
   test.y <- as.numeric(test$도로형태_대분류)
   
   mx.set.seed(seed)
@@ -241,14 +228,14 @@ detail_road_type <- function(path, learning_rate, out_node, hidden_node, round, 
   
   file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
   
-  acc <- read.csv(paste(path, file, sep="/"))
+  acc <- read.csv(paste(path, file, sep=""))
   acc$발생지시군구 <- as.factor(acc$발생지시군구)
   sample <- acc[1:20000, ]
   test <- acc[20001:nrow(acc), ]
   
-  train.x <- data.matrix(sample %>% dplyr::select(-도로형태,c(-1:-5)))
+  train.x <- detail_road_type_x(sample)
   train.y <- as.numeric(sample$도로형태)
-  test.x <- data.matrix(test %>% dplyr::select(-도로형태,c(-1:-5)))
+  test.x <- detail_road_type_x(test)
   test.y <- as.numeric(test$도로형태)
   
   mx.set.seed(seed)
@@ -259,10 +246,12 @@ detail_road_type <- function(path, learning_rate, out_node, hidden_node, round, 
   return (model)
 }
 
+# 서울 구별 평균 통행속도
 speed_subset_data <- function(path) {
-  accident <- read.csv(paste(path, '교통사망사고정보/Kor_Train_교통사망사고정보(12.1~17.6).csv', sep="/"))
-  road <- readxl::read_xlsx(paste(path, '보조데이터/03.서울시 도로 링크별 교통 사고발생 수/서울시 도로링크별 교통사고(2015~2017).xlsx', sep="/"))
-  speed_path <- paste(path, "보조데이터/01.서울시 차량 통행 속도", sep="/")
+  accident <- read.csv(paste(path, '교통사망사고정보/Kor_Train_교통사망사고정보(12.1~17.6).csv', sep=""))
+  road <- readxl::read_xlsx(paste(path, '보조데이터/03.서울시 도로 링크별 교통 사고발생 수/서울시 도로링크별 교통사고(2015~2017).xlsx', sep=""))
+  speed_path <- paste(path, "보조데이터/01.서울시 차량 통행 속도", sep="")
+
   # 진기 코드/
   file_csv_01 <- list.files(paste(speed_path, "/", sep=""), pattern="*.csv")
   file_CSV_01 <- list.files(paste(speed_path, "/", sep=""), pattern="*.CSV")
@@ -379,15 +368,16 @@ learning_all_models <- function(path) {
   speed_subset <- speed_subset_data(path)
   
   # Make model
-  day_night_model <- day_night(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
-  week_model <- week(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
-  violation_model <- violation(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
-  injury_cnt_model <- injury_cnt(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
-  accident_type_model <- accident_type(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
-  sido_model <- sido(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
-  sigungu_model <- sigungu(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
-  main_road_type_model <- main_road_type(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
-  detail_road_type_model <- detail_road_type(path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+  acc_path <- paste(path, "교통사망사고정보/", sep="")
+  day_night_model <- day_night(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+  week_model <- week(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+  violation_model <- violation(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+  injury_cnt_model <- injury_cnt(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+  accident_type_model <- accident_type(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+  sido_model <- sido(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+  sigungu_model <- sigungu(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+  main_road_type_model <- main_road_type(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+  detail_road_type_model <- detail_road_type(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
   
   # 저장
   mkdir("models")
@@ -401,10 +391,3 @@ learning_all_models <- function(path) {
   saveRDS(main_road_type_model, "models/main_road_type_model.rds")
   saveRDS(detail_road_type_model, "models/detail_road_type_model.rds")
 }
-
-# 실행시
-# Rscript --vanilla learning.R <dataset_kor directory path>
-args = commandArgs(trailingOnly = TRUE)
-dataset_kor_path = args[1]
-
-learning_all_models(datset_kor_path)

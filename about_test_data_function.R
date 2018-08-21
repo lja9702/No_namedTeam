@@ -1,7 +1,7 @@
-#테스트 데이터의 ""값을 NA로 변환 x는 test_data를 리턴해줄 매개인자, y는 test_dataSet의 경로
-presetting_testdata <- function(x, y){
-  x <- read.csv(y)
-  for(i in 1:ncol(x)){
+-#테스트 데이터의 ""값을 NA로 변환. test_path는 test_dataSet의 경로
+  presetting_testdata <- function(test_path){
+    x <- read.csv(test_path)
+    for(i in 1:ncol(x)){
     temp <- as.character(x[, i])
     temp[!nzchar(temp)] <- NA
     x[, i] <- as.factor(temp)
@@ -10,7 +10,7 @@ presetting_testdata <- function(x, y){
 }
 
 
-testData <- presetting_testdata(testData, "~/GitHub/No_namedTeam/test_kor.csv")   #경로 변경할 것
+testData <- presetting_testdata("~/GitHub/No_namedTeam/test_kor.csv")   #경로 변경할 것
 NaList <- check_and_Save_NA(testData)
 
 #테스트데이터의 col별 번호와 카테고리
