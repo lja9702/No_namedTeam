@@ -1,9 +1,18 @@
 require(dplyr)
-# 요기다 x로 바꿔주는 함수들 입력
 
 # 주야
-day_night_x <- function(data) {
+day_night_x <- function(data){
   return(data.matrix(data %>% select(c(요일, 발생지시도, 사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태_대분류, 도로형태))))
+}
+
+# 요일
+week_x <- function(data){
+ return(data.matrix(data %>% select(c(주야, 사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태, 당사자종별_1당_대분류, 당사자종별_2당_대분류)))) 
+}
+
+# 법규위반
+violation_x <- function(data){
+  return(data.matrix(data %>% select(c(주야, 발생지시도, 사고유형_대분류, 사고유형_중분류, 도로형태_대분류, 도로형태, 당사자종별_1당_대분류, 당사자종별_2당_대분류))))
 }
 
 #사고유형
