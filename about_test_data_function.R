@@ -50,13 +50,13 @@ check_and_Save_NA <- function(dataSet){
 
 resultData <- read.csv("~/GitHub/No_namedTeam/result_kor.csv")
 
-read_res_and_input <- function(x, y){ #x가 result_kor데이터셋, y가 testDataSet
+read_res_and_input <- function(x, y, path){ #x가 result_kor데이터셋, y가 testDataSet
   for(i in 1:nrow(x)){
     rownum = x[i][1]
     colnum = match(x[i][2], toupper(letters[1:26]))
     x[i][3] = y[rownum][colnum]
   }
-  write.csv("~/GitHub/No_namedTeam/result_kor.csv")
+  write.csv(paste(path,"result_kor.csv",sep='/'))
 }
 
 get_naData_col_row_res(NaList, testData)

@@ -5,6 +5,7 @@ setwd("C:/Users/Administrator/Documents/GitHub/No_namedTeam/")
 
 source("./setup_lib.R", encoding="utf-8")
 source("./util.R", encoding="utf-8")
+source("./about_test_data_function.R", encoding="utf-8")
 
 ####################### 여기에 test_kor 경로 입력 ############################
 TEST_KOR_PATH = "C:/Users/Administrator/Downloads/dataset_kor/test_kor.csv"
@@ -117,5 +118,7 @@ for(row in 1:nrow(test_data))
 
 
 # TODO: put result data
+
+read_res_and_input(result_data, test_data)
 
 # TODO: save to result_kor
