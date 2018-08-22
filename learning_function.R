@@ -328,6 +328,52 @@ detail_road_type <- function(path, learning_rate, out_node, hidden_node, round, 
   return (model)
 }
 
+# 당사자종별_1당_대분류
+attacker <- function(path, learning_rate, out_node, hidden_node, round, seed) {
+  
+  file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
+  
+  acc <- read.csv(paste(path, file, sep=""))
+  acc$발생지시군구 <- as.factor(acc$발생지시군구)
+  sample <- acc[1:20000, ]
+  test <- acc[20001:nrow(acc), ]
+  
+  train.x <- attacker_x(sample)
+  train.y <- as.numeric(sample$도로형태)
+  test.x <- detail_road_type_x(test)
+  test.y <- as.numeric(test$도로형태)
+  
+  mx.set.seed(seed)
+  model <- mx.mlp(train.x, train.y, hidden_node=hidden_node, out_node=out_node, activation="relu", out_activation="softmax",
+                  num.round=round, array.batch.size=100, learning.rate=learning_rate, momentum=0.9,
+                  eval.metric=mx.metric.accuracy, eval.data=list(data = test.x, label = test.y))
+  
+  return (model)
+}
+
+# 당사자종별_2당_대분류
+victim <- function(path, learning_rate, out_node, hidden_node, round, seed) {
+  
+  file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
+  
+  acc <- read.csv(paste(path, file, sep=""))
+  acc$발생지시군구 <- as.factor(acc$발생지시군구)
+  sample <- acc[1:20000, ]
+  test <- acc[20001:nrow(acc), ]
+  
+  train.x <- victim_x(sample)
+  train.y <- as.numeric(sample$도로형태)
+  test.x <- detail_road_type_x(test)
+  test.y <- as.numeric(test$도로형태)
+  
+  mx.set.seed(seed)
+  model <- mx.mlp(train.x, train.y, hidden_node=hidden_node, out_node=out_node, activation="relu", out_activation="softmax",
+                  num.round=round, array.batch.size=100, learning.rate=learning_rate, momentum=0.9,
+                  eval.metric=mx.metric.accuracy, eval.data=list(data = test.x, label = test.y))
+  
+  return (model)
+}
+
 # 서울 구별 평균 통행속도
 speed_subset_data <- function(path) {
   accident <- read.csv(paste(path, '교통사망사고정보/Kor_Train_교통사망사고정보(12.1~17.6).csv', sep=""))
@@ -448,9 +494,9 @@ learning_all_models <- function(path) {
 
   # Make model
   acc_path <- paste(path, "교통사망사고정보/", sep="")
-  day_night_model <- day_night(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
-  week_model <- week(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
-  violation_model <- violation(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+  day_night_model <- day_night(acc_path,learning_rate = 0.01,out_node = 30,hidden_node = 20,round = 1000,seed = 2000)
+  week_model <- week(acc_path,learning_rate = 0.01,out_node = 30,hidden_node = 20,round = 1000,seed = 2000)
+  violation_model <- violation(acc_path,learning_rate = 0.01,out_node = 30,hidden_node = 20,round = 1000,seed = 2000)
   injury_cnt_model <- injury_cnt(acc_path,learning_rate = 0.001,out_node = 50,hidden_node = 100,round = 1500,seed = 4444)
   injury_dead_cnt_model <- injury_dead_cnt(acc_path,learning_rate = 0.001,out_node = 50,hidden_node = 100,round = 1500,seed = 4444)
   injury_mid_cnt_model <- injury_mid_cnt(acc_path,learning_rate = 0.001,out_node = 50,hidden_node = 100,round = 1500,seed = 4444)
@@ -461,6 +507,8 @@ learning_all_models <- function(path) {
   sigungu_model <- sigungu(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
   main_road_type_model <- main_road_type(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
   detail_road_type_model <- detail_road_type(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+  attacker_model <- attacker(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+  victim_model <- victim(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
   
   # 저장
   mkdir("models")
@@ -477,4 +525,6 @@ learning_all_models <- function(path) {
   saveRDS(sigungu_model, "models/sigungu_model.rds")
   saveRDS(main_road_type_model, "models/main_road_type_model.rds")
   saveRDS(detail_road_type_model, "models/detail_road_type_model.rds")
+  saveRDS(attacker_model, "models/attacker_model.rds")
+  saveRDS(victim_model, "models/victim_model.rds")
 }
