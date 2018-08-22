@@ -194,8 +194,8 @@ injury_call_cnt <- function(path, learning_rate, out_node, hidden_node, round, s
   return (model)
 }
 
-# 사고유형
-# accident_type(path="", learning_rate=0.07, out_node=22, hidden_node=10, round=130, seed=0)
+# 사고유형_중분류
+# accident_type(path="", learning_rate=0.07, out_node=22, hidden_node=10, round=2000, seed=0)
 accident_type <- function(path, learning_rate, out_node, hidden_node, round, seed) {
   
   file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
@@ -216,8 +216,8 @@ accident_type <- function(path, learning_rate, out_node, hidden_node, round, see
   accident.temp$경상자수 <- as.numeric(accident.temp$경상자수)
   accident.temp$부상신고자수 <- as.numeric(accident.temp$부상신고자수)
   
-  sagou.temp <- as.data.frame(accident$사고유형)
-  colnames(sagou.temp) <- c("사고유형")
+  sagou.temp <- as.data.frame(accident$사고유형_중분류)
+  colnames(sagou.temp) <- c("사고유형_중분류")
   accident.scale <- cbind(accident.temp, sagou.temp)
   accident.scale[, 8] <- as.numeric(accident.scale[, 8])
   
@@ -424,13 +424,10 @@ speed_subset_data <- function(path) {
   avg_by_sigungu$사상자수 <- avg_by_sigungu$사망자수+avg_by_sigungu$중상자수+avg_by_sigungu$경상자수+avg_by_sigungu$부상신고자수
   avg_by_sigungu$통행속도대비사상자수 <- avg_by_sigungu$사상자수/avg_by_sigungu$평균통행속도
   
-  
-  
   # 원본 데이터에 붙여보겠음
   avg_speed <- mean(avg_by_sigungu$평균통행속도)
   avg_cnt <- mean(avg_by_sigungu$사고건수)
   avg_hurt <- mean(avg_by_sigungu$사상자수)
-  
   avg_by_sigungu <- rename(avg_by_sigungu, "발생지시군구"="시군구")
   avg_by_sigungu <- rename(avg_by_sigungu, "시군구사상자수"="사상자수")
   avg_by_sigungu <- avg_by_sigungu %>% select(발생지시군구, 평균통행속도, 사고건수, 시군구사상자수)
