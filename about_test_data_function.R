@@ -1,19 +1,7 @@
--#테스트 데이터의 ""값을 NA로 변환. test_path는 test_dataSet의 경로
+#테스트 데이터의 ""값을 NA로 변환. test_path는 test_dataSet의 경로
   
-######################################################preprocessing에 씀 지워야하는 코드!!!
-presetting_testdata <- function(test_path){
-    x <- read.csv(test_path)
-    for(i in 1:ncol(x)){
-    temp <- as.character(x[, i])
-    temp[!nzchar(temp)] <- NA
-    x[, i] <- as.factor(temp)
-  }
-  x
-}
-
-
-testData <- presetting_testdata("~/GitHub/No_namedTeam/test_kor.csv")   #경로 변경할 것
-NaList <- check_and_Save_NA(testData)
+#testData <- presetting_testdata("~/GitHub/No_namedTeam/test_kor.csv")   #경로 변경할 것
+#NaList <- check_and_Save_NA(testData)
 
 #테스트데이터의 col별 번호와 카테고리
 #1: 주야 2: 요일 3: 사망자수 4: 사상자수 5: 중상자수  
@@ -48,18 +36,19 @@ check_and_Save_NA <- function(dataSet){
   x
 }
 
-resultData <- read.csv("~/GitHub/No_namedTeam/result_kor.csv")
+#resultData <- read.csv("~/GitHub/No_namedTeam/result_kor.csv")
 
 read_res_and_input <- function(x, y, path){ #x가 result_kor데이터셋, y가 testDataSet
   for(i in 1:nrow(x)){
-    rownum = x[i][1]
-    colnum = match(x[i][2], toupper(letters[1:26]))
-    x[i][3] = y[rownum][colnum]
+    rownum = x[i, 2] - 1
+    colnum = match(x[i, 3], toupper(letters[1:26]))
+    x[i, 4] = as.character(y[rownum, colnum])
   }
-  write.csv(paste(path,"result_kor.csv",sep='/'))
+  x <- x[, c(2, 3, 4)]
+  write.csv(x, paste(path,"result_kor.csv",sep='/'), row.names = FALSE)
 }
 
-get_naData_col_row_res(NaList, testData)
+#get_naData_col_row_res(NaList, testData)
 
 
 fill_seouldata <- function(testData_Onerow, seoulMeanData){

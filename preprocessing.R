@@ -11,13 +11,13 @@ pre_except_sasang <- function(test_row, accident_file){ #데이터 테스트파�
                   kyoung_mean = sum(경상자수) / sum(사상자수), busangsin_mean = sum(부상신고자수) / sum(사상자수))
       target <- using_rate %>% filter(사고유형_중분류 == factor(test_row$사고유형_중분류, levels = levels(using_rate$사고유형_중분류)) )
       if(is.na(test_row$사망자수))
-        test_row$사망자수 <- target[1, ]$samang_mean * test_row$사상자수
+        test_row$사망자수 <- (target[1, ]$samang_mean * as.numeric(test_row$사상자수))
       if(is.na(test_row$중상자수))
-        test_row$중상자수 <- target[1, ]$joong_mean * test_row$사상자수
+        test_row$중상자수 <- (target[1, ]$joong_mean * as.numeric(test_row$사상자수))
       if(is.na(test_row$경상자수))
-        test_row$경상자수 <- target[1, ]$kyoung_mean * test_row$사상자수
+        test_row$경상자수 <- (target[1, ]$kyoung_mean * as.numeric(test_row$사상자수))
       if(is.na(test_row$부상신고자수))
-        test_row$부상신고자수 <- target[1, ]$busangsin_mean * test_row$사상자수
+        test_row$부상신고자수 <- (target[1, ]$busangsin_mean * as.numeric(test_row$사상자수))
       return(test_row)
     }
     #사고유형_중분류만 알 경우
@@ -46,13 +46,13 @@ pre_except_sasang <- function(test_row, accident_file){ #데이터 테스트파�
                   kyoung_mean = sum(경상자수) / sum(사상자수), busangsin_mean = sum(부상신고자수) / sum(사상자수))
       target <- using_rate %>% filter(도로형태 == factor(test_row$도로형태, levels = levels(using_rate$도로형태)))
       if(is.na(test_row$사망자수))
-        test_row$사망자수 <- target[1, ]$samang_mean * test_row$사상자수
+        test_row$사망자수 <- (target[1, ]$samang_mean * as.numeric(test_row$사상자수))
       if(is.na(test_row$중상자수))
-        test_row$중상자수 <- target[1, ]$joong_mean * test_row$사상자수
+        test_row$중상자수 <- (target[1, ]$joong_mean * as.numeric(test_row$사상자수))
       if(is.na(test_row$경상자수))
-        test_row$경상자수 <- target[1, ]$kyoung_mean * test_row$사상자수
+        test_row$경상자수 <- (target[1, ]$kyoung_mean * as.numeric(test_row$사상자수))
       if(is.na(test_row$부상신고자수))
-        test_row$부상신고자수 <- target[1, ]$busangsin_mean * test_row$사상자수
+        test_row$부상신고자수 <- (target[1, ]$busangsin_mean * as.numeric(test_row$사상자수))
       return(test_row)
     }
     #도로형태만 알 경우
@@ -112,7 +112,7 @@ pre_input_accidentType_big <- function(file, accident){  #테스트파일 불러
 
 #===================================================================================================================
 #도로형태를 알고있을 때 대분류 전처리
-pre_input_accidentType_big <- function(file, accident){  #테스트파일 불러오기, 주데이터파일
+pre_input_doro_big <- function(file, accident){  #테스트파일 불러오기, 주데이터파일
   type_small_to_big <- accident %>% group_by(도로형태) %>% distinct(도로형태_대분류)
   
   type_small_to_big$도로형태 = as.character(type_small_to_big$도로형태)
@@ -228,15 +228,3 @@ preprocessing_based_dangsaja <- function(file){
   file
 }
 
-
-#===================================================================================================================
-#test 데이터셋 비어있는 칸 NA로 채우는코드
-presetting_testdata <- function(TEST_KOR_PATH){
-  x <- read.csv(TEST_KOR_PATH)
-  for(i in 1:ncol(x)){
-    temp <- as.character(x[, i])
-    temp[!nzchar(temp)] <- NA
-    x[, i] <- as.factor(temp)
-  }
-  x
-}
