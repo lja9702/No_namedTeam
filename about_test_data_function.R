@@ -1,5 +1,7 @@
 -#테스트 데이터의 ""값을 NA로 변환. test_path는 test_dataSet의 경로
-  presetting_testdata <- function(test_path){
+  
+######################################################preprocessing에 씀 지워야하는 코드!!!
+presetting_testdata <- function(test_path){
     x <- read.csv(test_path)
     for(i in 1:ncol(x)){
     temp <- as.character(x[, i])
