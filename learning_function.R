@@ -89,20 +89,102 @@ injury_cnt <- function(path, learning_rate, out_node, hidden_node, round, seed)
 {
   file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
   accident <- read.csv(paste(path, file, sep=""))
-  
-  test <- accident[1:5000, ]
-  train <- accident[5001:nrow(accident),]
-  
-  sample <- train %>% filter(사상자수 != 1) # 사상자 수가 1인 경우를 제외한 데이터
-  sample_one <- train %>% filter(사상자수 == 1)
+
+  sample <- accident %>% filter(사상자수 != 1) # 사상자 수가 1인 경우를 제외한 데이터
+  sample_one <- accident %>% filter(사상자수 == 1)
   sample_one <- sample_one[sample(1:nrow(sample_one),2500),]
   sample <- rbind(sample, sample_one)
   
-  train.x <- data.matrix(sample %>% dplyr::select(c(4,6,14,16,17,18,19,20,22)))
+  train.x <- injury_count_x(sample)
   train.y <- sample$사상자수
   
-  test.x <- data.matrix(test %>% dplyr::select(c(4,6,14,16,17,18,19,20,22)))
-  test.y <- test$사상자수
+  set.seed(seed)
+  mx.set.seed(seed)
+  model <- mx.mlp(train.x, train.y, hidden_node=hidden_node, out_node=out_node, out_activation="softmax",
+                  num.round=round, array.batch.size=50, learning.rate=learning_rate, momentum=0.9,
+                  eval.metric=mx.metric.accuracy, eval.data = list(data = test.x, label = test.y))
+  return (model)
+}
+
+# 사망자수
+injury_dead_cnt <- function(path, learning_rate, out_node, hidden_node, round, seed)
+{
+  file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
+  accident <- read.csv(paste(path, file, sep=""))
+  
+  sample <- accident %>% filter(사망자수 != 1) # 사상자 수가 1인 경우를 제외한 데이터
+  sample_one <- accident %>% filter(사망자수 == 1)
+  sample_one <- sample_one[sample(1:nrow(sample_one),2500),]
+  sample <- rbind(sample, sample_one)
+  
+  train.x <- injury_dead_cnt_x(sample)
+  train.y <- sample$사망자수
+  
+  set.seed(seed)
+  mx.set.seed(seed)
+  model <- mx.mlp(train.x, train.y, hidden_node=hidden_node, out_node=out_node, out_activation="softmax",
+                  num.round=round, array.batch.size=50, learning.rate=learning_rate, momentum=0.9,
+                  eval.metric=mx.metric.accuracy, eval.data = list(data = test.x, label = test.y))
+  return (model)
+}
+
+# 중상자수
+injury_mid_cnt <- function(path, learning_rate, out_node, hidden_node, round, seed)
+{
+  file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
+  accident <- read.csv(paste(path, file, sep=""))
+  
+  sample <- accident %>% filter(중상자수 != 1) # 사상자 수가 1인 경우를 제외한 데이터
+  sample_one <- accident %>% filter(중상자수 == 1)
+  sample_one <- sample_one[sample(1:nrow(sample_one),2500),]
+  sample <- rbind(sample, sample_one)
+  
+  train.x <- injury_mid_cnt_x(sample)
+  train.y <- sample$중상자수
+  
+  set.seed(seed)
+  mx.set.seed(seed)
+  model <- mx.mlp(train.x, train.y, hidden_node=hidden_node, out_node=out_node, out_activation="softmax",
+                  num.round=round, array.batch.size=50, learning.rate=learning_rate, momentum=0.9,
+                  eval.metric=mx.metric.accuracy, eval.data = list(data = test.x, label = test.y))
+  return (model)
+}
+
+# 경상자수
+injury_weak_cnt <- function(path, learning_rate, out_node, hidden_node, round, seed)
+{
+  file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
+  accident <- read.csv(paste(path, file, sep=""))
+  
+  sample <- accident %>% filter(경상자수 != 1) # 사상자 수가 1인 경우를 제외한 데이터
+  sample_one <- accident %>% filter(경상자수 == 1)
+  sample_one <- sample_one[sample(1:nrow(sample_one),2500),]
+  sample <- rbind(sample, sample_one)
+  
+  train.x <- injury_weak_cnt_x(sample)
+  train.y <- sample$경상자수
+  
+  set.seed(seed)
+  mx.set.seed(seed)
+  model <- mx.mlp(train.x, train.y, hidden_node=hidden_node, out_node=out_node, out_activation="softmax",
+                  num.round=round, array.batch.size=50, learning.rate=learning_rate, momentum=0.9,
+                  eval.metric=mx.metric.accuracy, eval.data = list(data = test.x, label = test.y))
+  return (model)
+}
+
+# 부상신고자수
+injury_call_cnt <- function(path, learning_rate, out_node, hidden_node, round, seed)
+{
+  file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
+  accident <- read.csv(paste(path, file, sep=""))
+  
+  sample <- accident %>% filter(부상신고자수 != 1) # 사상자 수가 1인 경우를 제외한 데이터
+  sample_one <- accident %>% filter(부상신고자수 == 1)
+  sample_one <- sample_one[sample(1:nrow(sample_one),2500),]
+  sample <- rbind(sample, sample_one)
+  
+  train.x <- injury_call_cnt_x(sample)
+  train.y <- sample$부상신고자수
   
   set.seed(seed)
   mx.set.seed(seed)
@@ -366,13 +448,17 @@ learning_all_models <- function(path) {
   
   # 보조데이터 생성
   speed_subset <- speed_subset_data(path)
-  
+
   # Make model
   acc_path <- paste(path, "교통사망사고정보/", sep="")
   day_night_model <- day_night(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
   week_model <- week(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
   violation_model <- violation(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
-  injury_cnt_model <- injury_cnt(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+  injury_cnt_model <- injury_cnt(acc_path,learning_rate = 0.001,out_node = 50,hidden_node = 100,round = 1500,seed = 4444)
+  injury_dead_cnt_model <- injury_dead_cnt(acc_path,learning_rate = 0.001,out_node = 50,hidden_node = 100,round = 1500,seed = 4444)
+  injury_mid_cnt_model <- injury_mid_cnt(acc_path,learning_rate = 0.001,out_node = 50,hidden_node = 100,round = 1500,seed = 4444)
+  injury_weak_cnt_model <- injury_weak_cnt(acc_path,learning_rate = 0.001,out_node = 50,hidden_node = 100,round = 1500,seed = 4444)
+  injury_call_cnt_model <- injury_call_cnt(acc_path,learning_rate = 0.001,out_node = 50,hidden_node = 100,round = 1500,seed = 4444)
   accident_type_model <- accident_type(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
   sido_model <- sido(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
   sigungu_model <- sigungu(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
@@ -385,6 +471,10 @@ learning_all_models <- function(path) {
   saveRDS(week_model, "models/week_model.rds")
   saveRDS(violation_model, "models/violation_model.rds")
   saveRDS(injury_cnt_model, "models/injury_cnt_model.rds")
+  saveRDS(injury_dead_cnt_model, "models/injury_dead_cnt_model.rds")
+  saveRDS(injury_mid_cnt_model, "models/injury_mid_cnt_model.rds")
+  saveRDS(injury_weak_cnt_model, "models/injury_weak_cnt_model.rds")
+  saveRDS(injury_call_cnt_model, "models/injury_call_cnt_model.rds")
   saveRDS(accident_type_model, "models/accident_type_model.rds")
   saveRDS(sido_model, "models/sido_model.rds")
   saveRDS(sigungu_model, "models/sigungu_model.rds")
