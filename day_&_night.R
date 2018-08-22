@@ -33,15 +33,15 @@ rm(file)
 test <- accident[1:5000, ]
 train <- accident[5001:nrow(accident), ]
 
-train.x <- data.matrix(train %>% select(c(요일, 발생지시도, 사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태_대분류, 도로형태)))
-train.y <- as.numeric(train$주야)
+train.x <- data.matrix(train %>% dplyr::select(c(사망자수, 중상자수, 경상자수, 사상자수, 법규위반, 도로형태_대분류, 당사자종별_1당_대분류)))
+train.y <- as.numeric(train$당사자종별_2당_대분류)
 
-test.x <- data.matrix(test %>% select(c(요일, 발생지시도, 사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태_대분류, 도로형태)))
-test.y <- as.numeric(test$주야)
+test.x <- data.matrix(test %>% dplyr::select(c(사망자수, 중상자수, 경상자수, 사상자수, 법규위반, 도로형태_대분류, 당사자종별_1당_대분류)))
+test.y <- as.numeric(test$당사자종별_2당_대분류)
 
 mx.set.seed(2000)
 model <- mx.mlp(train.x, train.y, hidden_node=20, out_node=30, out_activation="softmax",
-                num.round=1000, array.batch.size=50, learning.rate=0.01, momentum=0.9,
+                num.round=100, array.batch.size=50, learning.rate=0.01, momentum=0.9,
                 eval.metric=mx.metric.accuracy, eval.data = list(data = test.x, label = test.y))
 
 preds = predict(model, test.x)

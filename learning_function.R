@@ -507,8 +507,8 @@ learning_all_models <- function(path) {
   sigungu_model <- sigungu(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
   main_road_type_model <- main_road_type(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
   detail_road_type_model <- detail_road_type(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
-  attacker_model <- attacker(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
-  victim_model <- victim(acc_path,learning_rate = 0,out_node = 0,hidden_node = 0,round = 0,seed = 0)
+  attacker_model <- attacker(acc_path,learning_rate = 0.01,out_node = 30,hidden_node = 20,round = 1000,seed = 2000)
+  victim_model <- victim(acc_path,learning_rate = 0.01,out_node = 30,hidden_node = 20,round = 1000,seed = 2000)
   
   # 저장
   mkdir("models")
