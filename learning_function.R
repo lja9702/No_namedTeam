@@ -71,7 +71,7 @@ violation <- function(path, learning_rate, out_node, hidden_node, round, seed)
   train <- accident[5001:nrow(accident), ]
   
   train.x <- violation_x(train)
-  train.y <- as.numeric(sample$법규위반)
+  train.y <- as.numeric(train$법규위반)
   
   test.x <- violation_x(test)
   test.y <- as.numeric(test$법규위반)
@@ -102,7 +102,7 @@ injury_cnt <- function(path, learning_rate, out_node, hidden_node, round, seed)
   mx.set.seed(seed)
   model <- mx.mlp(train.x, train.y, hidden_node=hidden_node, out_node=out_node, out_activation="softmax",
                   num.round=round, array.batch.size=50, learning.rate=learning_rate, momentum=0.9,
-                  eval.metric=mx.metric.accuracy, eval.data = list(data = test.x, label = test.y))
+                  eval.metric=mx.metric.accuracy)
   return (model)
 }
 
@@ -111,20 +111,15 @@ injury_dead_cnt <- function(path, learning_rate, out_node, hidden_node, round, s
 {
   file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
   accident <- read.csv(paste(path, file, sep=""))
-  
-  sample <- accident %>% filter(사망자수 != 1) # 사상자 수가 1인 경우를 제외한 데이터
-  sample_one <- accident %>% filter(사망자수 == 1)
-  sample_one <- sample_one[sample(1:nrow(sample_one),2500),]
-  sample <- rbind(sample, sample_one)
-  
-  train.x <- injury_dead_cnt_x(sample)
-  train.y <- sample$사망자수
+
+  train.x <- injury_dead_cnt_x(accident)
+  train.y <- accident$사망자수
   
   set.seed(seed)
   mx.set.seed(seed)
   model <- mx.mlp(train.x, train.y, hidden_node=hidden_node, out_node=out_node, out_activation="softmax",
                   num.round=round, array.batch.size=50, learning.rate=learning_rate, momentum=0.9,
-                  eval.metric=mx.metric.accuracy, eval.data = list(data = test.x, label = test.y))
+                  eval.metric=mx.metric.accuracy)
   return (model)
 }
 
@@ -134,19 +129,14 @@ injury_mid_cnt <- function(path, learning_rate, out_node, hidden_node, round, se
   file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
   accident <- read.csv(paste(path, file, sep=""))
   
-  sample <- accident %>% filter(중상자수 != 1) # 사상자 수가 1인 경우를 제외한 데이터
-  sample_one <- accident %>% filter(중상자수 == 1)
-  sample_one <- sample_one[sample(1:nrow(sample_one),2500),]
-  sample <- rbind(sample, sample_one)
-  
-  train.x <- injury_mid_cnt_x(sample)
-  train.y <- sample$중상자수
+  train.x <- injury_mid_cnt_x(accident)
+  train.y <- accident$중상자수
   
   set.seed(seed)
   mx.set.seed(seed)
   model <- mx.mlp(train.x, train.y, hidden_node=hidden_node, out_node=out_node, out_activation="softmax",
                   num.round=round, array.batch.size=50, learning.rate=learning_rate, momentum=0.9,
-                  eval.metric=mx.metric.accuracy, eval.data = list(data = test.x, label = test.y))
+                  eval.metric=mx.metric.accuracy)
   return (model)
 }
 
@@ -155,20 +145,16 @@ injury_weak_cnt <- function(path, learning_rate, out_node, hidden_node, round, s
 {
   file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
   accident <- read.csv(paste(path, file, sep=""))
+
   
-  sample <- accident %>% filter(경상자수 != 1) # 사상자 수가 1인 경우를 제외한 데이터
-  sample_one <- accident %>% filter(경상자수 == 1)
-  sample_one <- sample_one[sample(1:nrow(sample_one),2500),]
-  sample <- rbind(sample, sample_one)
-  
-  train.x <- injury_weak_cnt_x(sample)
-  train.y <- sample$경상자수
+  train.x <- injury_weak_cnt_x(accident)
+  train.y <- accident$경상자수
   
   set.seed(seed)
   mx.set.seed(seed)
   model <- mx.mlp(train.x, train.y, hidden_node=hidden_node, out_node=out_node, out_activation="softmax",
                   num.round=round, array.batch.size=50, learning.rate=learning_rate, momentum=0.9,
-                  eval.metric=mx.metric.accuracy, eval.data = list(data = test.x, label = test.y))
+                  eval.metric=mx.metric.accuracy)
   return (model)
 }
 
@@ -177,20 +163,16 @@ injury_call_cnt <- function(path, learning_rate, out_node, hidden_node, round, s
 {
   file <- "Kor_Train_교통사망사고정보(12.1~17.6).csv"
   accident <- read.csv(paste(path, file, sep=""))
+
   
-  sample <- accident %>% filter(부상신고자수 != 1) # 사상자 수가 1인 경우를 제외한 데이터
-  sample_one <- accident %>% filter(부상신고자수 == 1)
-  sample_one <- sample_one[sample(1:nrow(sample_one),2500),]
-  sample <- rbind(sample, sample_one)
-  
-  train.x <- injury_call_cnt_x(sample)
-  train.y <- sample$부상신고자수
+  train.x <- injury_call_cnt_x(accident)
+  train.y <- accident$부상신고자수
   
   set.seed(seed)
   mx.set.seed(seed)
   model <- mx.mlp(train.x, train.y, hidden_node=hidden_node, out_node=out_node, out_activation="softmax",
                   num.round=round, array.batch.size=50, learning.rate=learning_rate, momentum=0.9,
-                  eval.metric=mx.metric.accuracy, eval.data = list(data = test.x, label = test.y))
+                  eval.metric=mx.metric.accuracy)
   return (model)
 }
 
@@ -494,21 +476,21 @@ learning_all_models <- function(path) {
 
   # Make model
   acc_path <- paste(path, "교통사망사고정보/", sep="")
-  day_night_model <- day_night(acc_path,learning_rate = 0.01,out_node = 30,hidden_node = 20,round = 1000,seed = 2000)
-  week_model <- week(acc_path,learning_rate = 0.01,out_node = 30,hidden_node = 20,round = 1000,seed = 2000)
-  violation_model <- violation(acc_path,learning_rate = 0.01,out_node = 30,hidden_node = 20,round = 1000,seed = 2000)
-  injury_cnt_model <- injury_cnt(acc_path,learning_rate = 0.001,out_node = 50,hidden_node = 100,round = 1500,seed = 4444)
-  injury_dead_cnt_model <- injury_dead_cnt(acc_path,learning_rate = 0.001,out_node = 50,hidden_node = 100,round = 1500,seed = 4444)
-  injury_mid_cnt_model <- injury_mid_cnt(acc_path,learning_rate = 0.001,out_node = 50,hidden_node = 100,round = 1500,seed = 4444)
-  injury_weak_cnt_model <- injury_weak_cnt(acc_path,learning_rate = 0.001,out_node = 50,hidden_node = 100,round = 1500,seed = 4444)
-  injury_call_cnt_model <- injury_call_cnt(acc_path,learning_rate = 0.001,out_node = 50,hidden_node = 100,round = 1500,seed = 4444)
-  accident_type_model <- accident_type(acc_path,learning_rate = 0.07,out_node = 22,hidden_node = 100,round = 1000,seed = 4444)
-  sido_model <- sido(acc_path,learning_rate = 0.01,out_node = 17,hidden_node = 100,round = 1000,seed = 4444)
-  sigungu_model <- sigungu(acc_path,learning_rate = 0.01,out_node = 209,hidden_node = 1000,round = 1000,seed = 4444)
-  main_road_type_model <- main_road_type(acc_path,learning_rate = 0.01,out_node = 9,hidden_node = 1000,round = 1000,seed = 4444)
-  detail_road_type_model <- detail_road_type(acc_path,learning_rate = 0.01,out_node = 16,hidden_node = 1000,round = 1000,seed = 4444)
-  attacker_model <- attacker(acc_path,learning_rate = 0.01,out_node = 30,hidden_node = 20,round = 1000,seed = 2000)
-  victim_model <- victim(acc_path,learning_rate = 0.01,out_node = 30,hidden_node = 20,round = 1000,seed = 2000)
+  day_night_model <- day_night(acc_path,learning_rate = 0.01,out_node = 30,hidden_node = 20,round = 1,seed = 2000)
+  week_model <- week(acc_path,learning_rate = 0.01,out_node = 30,hidden_node = 20,round = 1,seed = 2000)
+  violation_model <- violation(acc_path,learning_rate = 0.01,out_node = 30,hidden_node = 20,round = 1,seed = 2000)
+  injury_cnt_model <- injury_cnt(acc_path,learning_rate = 0.001,out_node = 50,hidden_node = 100,round = 1,seed = 4444)
+  injury_dead_cnt_model <- injury_dead_cnt(acc_path,learning_rate = 0.001,out_node = 50,hidden_node = 100,round = 1,seed = 4444)
+  injury_mid_cnt_model <- injury_mid_cnt(acc_path,learning_rate = 0.001,out_node = 50,hidden_node = 100,round = 1,seed = 4444)
+  injury_weak_cnt_model <- injury_weak_cnt(acc_path,learning_rate = 0.001,out_node = 50,hidden_node = 100,round = 1,seed = 4444)
+  injury_call_cnt_model <- injury_call_cnt(acc_path,learning_rate = 0.001,out_node = 50,hidden_node = 100,round = 1,seed = 4444)
+  accident_type_model <- accident_type(acc_path,learning_rate = 0.07,out_node = 22,hidden_node = 100,round = 1,seed = 4444)
+  sido_model <- sido(acc_path,learning_rate = 0.01,out_node = 17,hidden_node = 100,round = 1,seed = 4444)
+  sigungu_model <- sigungu(acc_path,learning_rate = 0.01,out_node = 209,hidden_node = 1000,round = 1,seed = 4444)
+  main_road_type_model <- main_road_type(acc_path,learning_rate = 0.01,out_node = 9,hidden_node = 1000,round = 1,seed = 4444)
+  detail_road_type_model <- detail_road_type(acc_path,learning_rate = 0.01,out_node = 16,hidden_node = 1000,round = 1,seed = 4444)
+  attacker_model <- attacker(acc_path,learning_rate = 0.01,out_node = 30,hidden_node = 20,round = 1,seed = 2000)
+  victim_model <- victim(acc_path,learning_rate = 0.01,out_node = 30,hidden_node = 20,round = 1,seed = 2000)
   
   # 저장
   mkdir("models")
