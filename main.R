@@ -69,29 +69,47 @@ test_data <- preprocessing_based_dangsaja(test_data)
 td <- train_data
 td$주야 <- as.ordered(td$주야)
 max(td$주야)
-td$주야 <- ifelse(is.na(td$주야), max(td$주야), td$주야)
+test_data$주야 <- ifelse(is.na(test_data$주야), max(td$주야), test_data$주야)
 
-td$요이 <- as.ordered(일)
-max(td$주야)
-td$주야 <- ifelse(is.na(td$주야), max(td$주야), td$주야)
+td$요일 <- as.ordered(td$요일)
+max(td$요일)
+test_data$주야 <- ifelse(is.na(test_data$요일), max(td$요일), test_data$요일)
 
-td$주야 <- as.ordered(td$주야)
-max(td$주야)
-td$주야 <- ifelse(is.na(td$주야), max(td$주야), td$주야)
+td$발생지시도 <- as.ordered(td$발생지시도)
+max(td$발생지시도)
+test_data$발생지시도 <- ifelse(is.na(test_data$발생지시도), max(td$발생지시도), test_data$발생지시도)
 
-td$주야 <- as.ordered(td$주야)
-max(td$주야)
-td$주야 <- ifelse(is.na(td$주야), max(td$주야), td$주야)
+td$발생지시군구 <- as.ordered(td$발생지시군구)
+max(td$발생지시군구)
+test_data$발생지시군구 <- ifelse(is.na(test_data$발생지시군구), max(td$발생지시군구), test_data$발생지시군구)
 
-td$주야 <- as.ordered(td$주야)
-max(td$주야)
-td$주야 <- ifelse(is.na(td$주야), max(td$주야), td$주야)
+td$사고유형_대분류 <- as.ordered(td$사고유형_대분류)
+max(td$사고유형_대분류)
+test_data$사고유형_대분류 <- ifelse(is.na(test_data$사고유형_대분류), max(td$사고유형_대분류), test_data$사고유형_대분류)
 
-td$주야 <- as.ordered(td$주야)
-max(td$주야)
-td$주야 <- ifelse(is.na(td$주야), max(td$주야), td$주야)
+td$사고유형_중분류 <- as.ordered(td$사고유형_중분류)
+max(td$사고유형_중분류)
+test_data$사고유형_중분류 <- ifelse(is.na(test_data$사고유형_중분류), max(td$사고유형_중분류), test_data$사고유형_중분류)
 
+td$법규위반 <- as.ordered(td$법규위반)
+max(td$법규위반)
+test_data$법규위반 <- ifelse(is.na(test_data$법규위반), max(td$법규위반), test_data$법규위반)
 
+td$도로형태_대분류 <- as.ordered(td$도로형태_대분류)
+max(td$도로형태_대분류)
+test_data$도로형태_대분류 <- ifelse(is.na(test_data$도로형태_대분류), max(td$도로형태_대분류), test_data$도로형태_대분류)
+
+td$도로형태 <- as.ordered(td$도로형태)
+max(td$도로형태)
+test_data$도로형태 <- ifelse(is.na(test_data$도로형태), max(td$도로형태), test_data$도로형태)
+
+td$당사자종별_1당_대분류 <- as.ordered(td$당사자종별_1당_대분류)
+max(td$당사자종별_1당_대분류)
+test_data$당사자종별_1당_대분류 <- ifelse(is.na(test_data$당사자종별_1당_대분류), max(td$당사자종별_1당_대분류), test_data$당사자종별_1당_대분류)
+
+td$당사자종별_2당_대분류 <- as.ordered(td$당사자종별_2당_대분류)
+max(td$당사자종별_2당_대분류)
+test_data$당사자종별_2당_대분류 <- ifelse(is.na(test_data$당사자종별_2당_대분류), max(td$당사자종별_2당_대분류), test_data$당사자종별_2당_대분류)
   
 # TODO: input test_kor to models
 # predict_y(day_night_model, ~~~)
