@@ -42,10 +42,10 @@ week <- function(path, learning_rate, out_node, hidden_node, round, seed)
   test <- accident[1:5000, ]
   train <- accident[5001:nrow(accident), ]
   
-  train.x <- data.matrix(train %>% select(c(주야, 사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태, 당사자종별_1당_대분류, 당사자종별_2당_대분류)))
+  train.x <- week_x(train)
   train.y <- as.numeric(train$요일)
   
-  test.x <- data.matrix(test %>% select(c(주야, 사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태, 당사자종별_1당_대분류, 당사자종별_2당_대분류)))
+  test.x <- week_x(test)
   test.y <- as.numeric(test$요일)
   
   mx.set.seed(seed)
@@ -70,10 +70,10 @@ violation <- function(path, learning_rate, out_node, hidden_node, round, seed)
   test <- accident[1:5000, ]
   train <- accident[5001:nrow(accident), ]
   
-  train.x <- data.matrix(sample %>% select(c(주야, 발생지시도, 사고유형_대분류, 사고유형_중분류, 도로형태_대분류, 도로형태, 당사자종별_1당_대분류, 당사자종별_2당_대분류)))
+  train.x <- violation_x(train)
   train.y <- as.numeric(sample$법규위반)
   
-  test.x <- data.matrix(test %>% select(c(주야, 발생지시도, 사고유형_대분류, 사고유형_중분류, 도로형태_대분류, 도로형태, 당사자종별_1당_대분류, 당사자종별_2당_대분류)))
+  test.x <- violation_x(test)
   test.y <- as.numeric(test$법규위반)
   
   mx.set.seed(seed)
@@ -340,7 +340,7 @@ attacker <- function(path, learning_rate, out_node, hidden_node, round, seed) {
   
   train.x <- attacker_x(sample)
   train.y <- as.numeric(sample$도로형태)
-  test.x <- detail_road_type_x(test)
+  test.x <- attacker_x(test)
   test.y <- as.numeric(test$도로형태)
   
   mx.set.seed(seed)
@@ -363,7 +363,7 @@ victim <- function(path, learning_rate, out_node, hidden_node, round, seed) {
   
   train.x <- victim_x(sample)
   train.y <- as.numeric(sample$도로형태)
-  test.x <- detail_road_type_x(test)
+  test.x <- victim_x(test)
   test.y <- as.numeric(test$도로형태)
   
   mx.set.seed(seed)
@@ -490,7 +490,7 @@ speed_subset_data <- function(path) {
 learning_all_models <- function(path) {
   
   # 보조데이터 생성
-  speed_subset <- speed_subset_data(path)
+  #speed_subset <- speed_subset_data(path)
 
   # Make model
   acc_path <- paste(path, "교통사망사고정보/", sep="")
