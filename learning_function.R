@@ -339,9 +339,9 @@ attacker <- function(path, learning_rate, out_node, hidden_node, round, seed) {
   test <- acc[20001:nrow(acc), ]
   
   train.x <- attacker_x(sample)
-  train.y <- as.numeric(sample$도로형태)
+  train.y <- as.numeric(sample$당사자종별_1당_대분류)
   test.x <- attacker_x(test)
-  test.y <- as.numeric(test$도로형태)
+  test.y <- as.numeric(test$당사자종별_1당_대분류)
   
   mx.set.seed(seed)
   model <- mx.mlp(train.x, train.y, hidden_node=hidden_node, out_node=out_node, activation="relu", out_activation="softmax",
@@ -362,9 +362,9 @@ victim <- function(path, learning_rate, out_node, hidden_node, round, seed) {
   test <- acc[20001:nrow(acc), ]
   
   train.x <- victim_x(sample)
-  train.y <- as.numeric(sample$도로형태)
+  train.y <- as.numeric(sample$당사자종별_2당_대분류)
   test.x <- victim_x(test)
-  test.y <- as.numeric(test$도로형태)
+  test.y <- as.numeric(test$당사자종별_2당_대분류)
   
   mx.set.seed(seed)
   model <- mx.mlp(train.x, train.y, hidden_node=hidden_node, out_node=out_node, activation="relu", out_activation="softmax",
