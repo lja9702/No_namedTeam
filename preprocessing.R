@@ -25,7 +25,7 @@ pre_except_sasang <- function(test_row, accident_file){ #데이터 테스트파�
       using_mean <- accident_file %>% group_by(사고유형_중분류) %>% 
         summarise(mean_사망자수 = mean(사망자수), mean_사상자수 = mean(사상자수), mean_경상자수 = mean(경상자수), mean_중상자수 = mean(중상자수), mean_부상신고자수 = mean(부상신고자수))
 
-      target <- using_mean %>% filter(사고유형_중분류 == factor(test_row$사고유형_중분류, levels = levels(using_rate$사고유형_중분류)))
+      target <- using_mean %>% filter(사고유형_중분류 == factor(test_row$사고유형_중분류, levels = levels(using_mean$사고유형_중분류)))
       if(is.na(test_row$사망자수))
         test_row$사망자수 <- target[1, ]$mean_사망자수
       if(is.na(test_row$중상자수))
@@ -59,7 +59,7 @@ pre_except_sasang <- function(test_row, accident_file){ #데이터 테스트파�
     else{
       using_mean <- accident_file %>% group_by(도로형태) %>% 
         summarise(mean_사망자수 = mean(사망자수), mean_사상자수 = mean(사상자수), mean_경상자수 = mean(경상자수), mean_중상자수 = mean(중상자수), mean_부상신고자수 = mean(부상신고자수))
-      target <- using_mean %>% filter(도로형태 == factor(test_row$도로형태, levels = levels(using_rate$도로형태)))
+      target <- using_mean %>% filter(도로형태 == factor(test_row$도로형태, levels = levels(using_mean$도로형태)))
       if(is.na(test_row$사망자수))
         test_row$사망자수 <- target$mean_사망자수
       if(is.na(test_row$중상자수))

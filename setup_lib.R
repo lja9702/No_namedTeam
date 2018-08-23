@@ -37,5 +37,4 @@ if (!require(dplyr)){
   install.packages("dplyr")
   require(dplyr)
 }
-rm(cran)
 
