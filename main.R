@@ -114,6 +114,7 @@ for(row in 1:nrow(test_data))
       else if(col == 10)
       {
         # 중분류 값을 참조해서 구하기
+        
       }
       else if(col == 11)
       {
@@ -143,6 +144,7 @@ for(row in 1:nrow(test_data))
   }
 }
 
+pre_input_accidentType_big(test_data, train_data)
 
 # TODO: put result data
 
