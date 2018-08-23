@@ -1,23 +1,24 @@
 
 ####################### 소스코드가 있는 경로 입력 ###############################
-setwd("C:/Users/Administrator/Documents/GitHub/No_namedTeam/")
+setwd("C:/Users/ehfkd/OneDrive/Documents/No_named/")
 #################################################################################
 
 source("./setup_lib.R", encoding="utf-8")
 source("./util.R", encoding="utf-8")
 source("./about_test_data_function.R", encoding="utf-8")
 source("./preprocessing.R", encoding="utf-8")
+source("./make_x.R", encoding="utf-8")
 
 ####################### 여기에 train 데이터 경로 입력 ############################
-TRAIN_PATH = "C:/Users/Administrator/Downloads/dataset_kor/교통사망사고정보/Kor_Train_교통사망사고정보(12.1~17.6).csv"
+TRAIN_PATH = "C:/Users/ehfkd/OneDrive/Documents/dataset_kor/교통사망사고정보/Kor_Train_교통사망사고정보(12.1~17.6).csv"
 #################################################################################
 
 ####################### 여기에 test_kor 경로 입력 ############################
-TEST_KOR_PATH = "C:/Users/Administrator/Downloads/dataset_kor/test_kor.csv"
+TEST_KOR_PATH = "C:/Users/ehfkd/OneDrive/Documents/test_kor.csv"
 #################################################################################
 
 ####################### 여기에 result_kor 경로 입력 ############################
-RESULT_KOR_PATH = "C:/Users/Administrator/Downloads/dataset_kor/result_kor.csv"
+RESULT_KOR_PATH = "C:/Users/ehfkd/OneDrive/Documents/result_kor.csv"
 #################################################################################
 
 
@@ -65,9 +66,54 @@ test_data <- pre_input_doro_big(test_data, train_data)
 test_data <- preprocessing_based_accidentType(test_data)
 test_data <- preprocessing_based_dangsaja(test_data)
 
+td <- train_data
+td$주야 <- as.ordered(td$주야)
+max(td$주야)
+td$주야 <- ifelse(is.na(td$주야), max(td$주야), td$주야)
 
+td$요이 <- as.ordered(일)
+max(td$주야)
+td$주야 <- ifelse(is.na(td$주야), max(td$주야), td$주야)
+
+td$주야 <- as.ordered(td$주야)
+max(td$주야)
+td$주야 <- ifelse(is.na(td$주야), max(td$주야), td$주야)
+
+td$주야 <- as.ordered(td$주야)
+max(td$주야)
+td$주야 <- ifelse(is.na(td$주야), max(td$주야), td$주야)
+
+td$주야 <- as.ordered(td$주야)
+max(td$주야)
+td$주야 <- ifelse(is.na(td$주야), max(td$주야), td$주야)
+
+td$주야 <- as.ordered(td$주야)
+max(td$주야)
+td$주야 <- ifelse(is.na(td$주야), max(td$주야), td$주야)
+
+
+  
 # TODO: input test_kor to models
 # predict_y(day_night_model, ~~~)
+c1 <- predict_y(day_night_model, day_night_x(test_data))
+c2 <- predict_y(week_model, test_data)
+c3 <- predict_y(injury_dead_cnt_model, test_data)
+c4 <- predict_y(injury_cnt_model, test_data)
+c5 <- predict_y(injury_mid_cnt_model, test_data)
+c6 <- predict_y(injury_weak_cnt_model, test_data)
+c7 <- predict_y(injury_call_cnt_model, test_data)
+c8 <- predict_y(sido_model, test_data)
+c9 <- predict_y(sigungu_model, test_data)
+c10 <- predict_y(accident_type_model, test_data) #dummy
+c11 <- predict_y(accident_type_model, test_data)
+c12 <- predict_y(violation_model, test_data)
+c13 <- predict_y(main_road_type_model, test_data)
+c14 <- predict_y(detail_road_type_model, test_data)
+c15 <- predict_y(attacker_model, test_data)
+c16 <- predict_y(victim_model, test_data)
+
+predict_df <- cbind(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16)
+predict_df <- as.data.frame(predict_df)
 
 for(row in 1:nrow(test_data))
 {
@@ -114,7 +160,6 @@ for(row in 1:nrow(test_data))
       else if(col == 10)
       {
         # 중분류 값을 참조해서 구하기
-        
       }
       else if(col == 11)
       {
