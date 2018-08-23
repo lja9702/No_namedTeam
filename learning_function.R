@@ -71,7 +71,7 @@ violation <- function(path, learning_rate, out_node, hidden_node, round, seed)
   train <- accident[5001:nrow(accident), ]
   
   train.x <- violation_x(train)
-  train.y <- as.numeric(sample$법규위반)
+  train.y <- as.numeric(train$법규위반)
   
   test.x <- violation_x(test)
   test.y <- as.numeric(test$법규위반)
