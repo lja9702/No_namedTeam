@@ -1,6 +1,6 @@
 
 ####################### 소스코드가 있는 경로 입력 ###############################
-setwd("C:/Users/ehfkd/OneDrive/Documents/No_named/")
+setwd("C:/Users/Administrator/Documents/GitHub/No_namedTeam/")
 #################################################################################
 
 source("./setup_lib.R", encoding="utf-8")
@@ -10,15 +10,15 @@ source("./preprocessing.R", encoding="utf-8")
 source("./make_x.R", encoding="utf-8")
 
 ####################### 여기에 train 데이터 경로 입력 ############################
-TRAIN_PATH = "C:/Users/ehfkd/OneDrive/Documents/dataset_kor/교통사망사고정보/Kor_Train_교통사망사고정보(12.1~17.6).csv"
+TRAIN_PATH = "C:/Users/Administrator/Downloads/dataset_kor/교통사망사고정보/Kor_Train_교통사망사고정보(12.1~17.6).csv"
 #################################################################################
 
 ####################### 여기에 test_kor 경로 입력 ############################
-TEST_KOR_PATH = "C:/Users/ehfkd/OneDrive/Documents/test_kor.csv"
+TEST_KOR_PATH = "C:/Users/Administrator/Downloads/dataset_kor/test_kor.csv"
 #################################################################################
 
 ####################### 여기에 result_kor 경로 입력 ############################
-RESULT_KOR_PATH = "C:/Users/ehfkd/OneDrive/Documents/result_kor.csv"
+RESULT_KOR_PATH = "C:/Users/Administrator/Downloads/dataset_kor/result_kor.csv"
 #################################################################################
 
 
@@ -75,7 +75,7 @@ test_data$주야 <- ifelse(is.na(test_data$주야), max(td$주야), test_data$�
 
 td$요일 <- as.ordered(td$요일)
 max(td$요일)
-test_data$주야 <- ifelse(is.na(test_data$요일), max(td$요일), test_data$요일)
+test_data$요일 <- ifelse(is.na(test_data$요일), max(td$요일), test_data$요일)
 
 td$발생지시도 <- as.ordered(td$발생지시도)
 max(td$발생지시도)
@@ -125,7 +125,7 @@ test_data$부상신고자수 <- ifelse(is.na(test_data$부상신고자수), mean
 c1 <- predict_y(day_night_model, day_night_x(test_data))
 c2 <- predict_y(week_model, week_x(test_data))
 c3 <- predict_y(injury_dead_cnt_model, injury_dead_cnt_x(test_data))
-c4 <- predict_y(injury_cnt_model, injury_cnt_x(test_data))
+c4 <- predict_y(injury_cnt_model, injury_count_x(test_data))
 c5 <- predict_y(injury_mid_cnt_model, injury_mid_cnt_x(test_data))
 c6 <- predict_y(injury_weak_cnt_model, injury_weak_cnt_x(test_data))
 c7 <- predict_y(injury_call_cnt_model, injury_call_cnt_x(test_data))

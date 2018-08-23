@@ -17,7 +17,7 @@ violation_x <- function(data){
 
 #사고유형
 accident_type_x <- function(data){
-  return(data.matrix(data %>% dplyr::select(c(사망자수, 중상자수, 경상자수, 부상신고자수, 당사자종별_1당, 당사자종별_2당, 법규위반))))
+  return(data.matrix(data %>% dplyr::select(c(사망자수, 중상자수, 경상자수, 부상신고자수, 당사자종별_1당_대분류, 당사자종별_2당_대분류, 법규위반))))
 }
 
 #발생지시도
@@ -32,45 +32,45 @@ sigungu_x <- function(data){
 
 #도로형태 대분류
 main_road_type_x <- function(data){
-  return(data.matrix(data %>% dplyr::select(c(사망자수, 중상자수, 경상자수, 부상신고자수, 발생지시도, 발생지시군구, 사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태, 당사자종별_1당, 당사자종별_2당))))
+  return(data.matrix(data %>% dplyr::select(c(사망자수, 중상자수, 경상자수, 부상신고자수, 발생지시도, 발생지시군구, 사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태, 당사자종별_1당_대분류, 당사자종별_2당_대분류))))
 }
 
 #도로형태
 detail_road_type_x <- function(data){
-  return(data.matrix(data %>% dplyr::select(c(주야,사망자수,중상자수,경상자수,부상신고자수,사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태, 당사자종별_1당, 당사자종별_2당))))
+  return(data.matrix(data %>% dplyr::select(c(주야,사망자수,중상자수,경상자수,부상신고자수,사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태, 당사자종별_1당_대분류, 당사자종별_2당_대분류))))
 }
 
 # 사상자수
 injury_count_x <- function(data){
-  return(data.matrix(data %>% dplyr::select(c(사망자수, 중상자수, 경상자수, 부상신고자수, 발생지시도, 발생지시군구, 사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태_대분류, 당사자종별_1당, 당사자종별_2당))))
+  return(data.matrix(data %>% dplyr::select(c(사망자수, 중상자수, 경상자수, 부상신고자수, 발생지시도, 발생지시군구, 사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태_대분류, 당사자종별_1당_대분류, 당사자종별_2당_대분류))))
 }
 
 # 사망자수
 injury_dead_cnt_x <- function(data){
-  return(data.matrix(data %>% dplyr::select(c(사상자수, 중상자수, 경상자수, 부상신고자수, 발생지시도, 발생지시군구, 사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태_대분류, 당사자종별_1당, 당사자종별_2당))))
+  return(data.matrix(data %>% dplyr::select(c(사상자수, 중상자수, 경상자수, 부상신고자수, 발생지시도, 발생지시군구, 사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태_대분류, 당사자종별_1당_대분류, 당사자종별_2당_대분류))))
 }
 
 # 중상자수
 injury_mid_cnt_x <- function(data){
-  return(data.matrix(data %>% dplyr::select(c(사망자수, 사상자수, 경상자수, 부상신고자수, 발생지시도, 발생지시군구, 사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태_대분류, 당사자종별_1당, 당사자종별_2당))))
+  return(data.matrix(data %>% dplyr::select(c(사망자수, 사상자수, 경상자수, 부상신고자수, 발생지시도, 발생지시군구, 사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태_대분류, 당사자종별_1당_대분류, 당사자종별_2당_대분류))))
 }
 
 # 경상자수
 injury_weak_cnt_x <- function(data){
-  return(data.matrix(data %>% dplyr::select(c(사망자수, 중상자수, 사상자수, 부상신고자수, 발생지시도, 발생지시군구, 사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태_대분류, 당사자종별_1당, 당사자종별_2당))))
+  return(data.matrix(data %>% dplyr::select(c(사망자수, 중상자수, 사상자수, 부상신고자수, 발생지시도, 발생지시군구, 사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태_대분류, 당사자종별_1당_대분류, 당사자종별_2당_대분류))))
 }
 
 # 부상신고자수
 injury_call_cnt_x <- function(data){
-  return(data.matrix(data %>% dplyr::select(c(사망자수, 중상자수, 경상자수, 사상자수, 발생지시도, 발생지시군구, 사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태_대분류, 당사자종별_1당, 당사자종별_2당))))
+  return(data.matrix(data %>% dplyr::select(c(사망자수, 중상자수, 경상자수, 사상자수, 발생지시도, 발생지시군구, 사고유형_대분류, 사고유형_중분류, 법규위반, 도로형태_대분류, 당사자종별_1당_대분류, 당사자종별_2당_대분류))))
 }
 
 # 당사자종별_1당_대분류
 attacker_x <- function(data){
-  return(data.matrix(data %>% dplyr::select(c(사망자수, 중상자수, 경상자수, 사상자수, 법규위반, 도로형태_대분류, 당사자종별_2당))))
+  return(data.matrix(data %>% dplyr::select(c(사망자수, 중상자수, 경상자수, 사상자수, 법규위반, 도로형태_대분류, 당사자종별_2당_대분류))))
 }
 
 # 당사자종별_2당_대분류
 victim_x <- function(data){
-  return(data.matrix(data %>% dplyr::select(c(사망자수, 중상자수, 경상자수, 사상자수, 법규위반, 도로형태_대분류, 당사자종별_1당))))
+  return(data.matrix(data %>% dplyr::select(c(사망자수, 중상자수, 경상자수, 사상자수, 법규위반, 도로형태_대분류, 당사자종별_1당_대분류))))
 }
